@@ -44,7 +44,7 @@
             this.lbPCname = new System.Windows.Forms.Label();
             this.btnApplyName = new System.Windows.Forms.Button();
             this.tbHOSTID = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbSelProInfo = new System.Windows.Forms.Label();
             this.tbHdrInfo = new System.Windows.Forms.TextBox();
             this.btnRunHdr = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -244,6 +244,7 @@
             this.cbfilterSTD.Size = new System.Drawing.Size(93, 17);
             this.cbfilterSTD.TabIndex = 10;
             this.cbfilterSTD.Text = "Filter out 2 SD";
+            this.toolTip1.SetToolTip(this.cbfilterSTD, "Click to see the difference\r\nin the averages when extreme\r\ndata is discarded.");
             this.cbfilterSTD.UseVisualStyleBackColor = true;
             this.cbfilterSTD.CheckedChanged += new System.EventHandler(this.cbfilterSTD_CheckedChanged);
             // 
@@ -264,10 +265,10 @@
             this.gbSamURL.Controls.Add(this.lbPCname);
             this.gbSamURL.Controls.Add(this.btnApplyName);
             this.gbSamURL.Controls.Add(this.tbHOSTID);
-            this.gbSamURL.Controls.Add(this.label2);
+            this.gbSamURL.Controls.Add(this.lbSelProInfo);
             this.gbSamURL.Location = new System.Drawing.Point(23, 319);
             this.gbSamURL.Name = "gbSamURL";
-            this.gbSamURL.Size = new System.Drawing.Size(428, 324);
+            this.gbSamURL.Size = new System.Drawing.Size(428, 358);
             this.gbSamURL.TabIndex = 10;
             this.gbSamURL.TabStop = false;
             this.gbSamURL.Text = "Select Project";
@@ -275,7 +276,7 @@
             // lbPCname
             // 
             this.lbPCname.AutoSize = true;
-            this.lbPCname.Location = new System.Drawing.Point(16, 297);
+            this.lbPCname.Location = new System.Drawing.Point(16, 325);
             this.lbPCname.Name = "lbPCname";
             this.lbPCname.Size = new System.Drawing.Size(128, 16);
             this.lbPCname.TabIndex = 10;
@@ -285,7 +286,7 @@
             // 
             this.btnApplyName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnApplyName.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.btnApplyName.Location = new System.Drawing.Point(313, 33);
+            this.btnApplyName.Location = new System.Drawing.Point(347, 33);
             this.btnApplyName.Name = "btnApplyName";
             this.btnApplyName.Size = new System.Drawing.Size(75, 23);
             this.btnApplyName.TabIndex = 9;
@@ -296,26 +297,26 @@
             // tbHOSTID
             // 
             this.tbHOSTID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbHOSTID.Location = new System.Drawing.Point(223, 34);
+            this.tbHOSTID.Location = new System.Drawing.Point(257, 34);
             this.tbHOSTID.Name = "tbHOSTID";
             this.tbHOSTID.Size = new System.Drawing.Size(84, 22);
             this.tbHOSTID.TabIndex = 8;
             this.tbHOSTID.Text = "12345";
             // 
-            // label2
+            // lbSelProInfo
             // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.SystemColors.Info;
-            this.label2.Location = new System.Drawing.Point(16, 29);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(145, 32);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Select project name\r\nthen enter HOST ID";
+            this.lbSelProInfo.AutoSize = true;
+            this.lbSelProInfo.BackColor = System.Drawing.SystemColors.Info;
+            this.lbSelProInfo.Location = new System.Drawing.Point(16, 24);
+            this.lbSelProInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbSelProInfo.Name = "lbSelProInfo";
+            this.lbSelProInfo.Size = new System.Drawing.Size(145, 32);
+            this.lbSelProInfo.TabIndex = 7;
+            this.lbSelProInfo.Text = "Select project name\r\nthen enter HOST ID";
             // 
             // tbHdrInfo
             // 
-            this.tbHdrInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbHdrInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbHdrInfo.Location = new System.Drawing.Point(429, 159);
             this.tbHdrInfo.Multiline = true;
             this.tbHdrInfo.Name = "tbHdrInfo";
@@ -324,14 +325,14 @@
             // 
             // btnRunHdr
             // 
-            this.btnRunHdr.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRunHdr.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRunHdr.ForeColor = System.Drawing.Color.Blue;
             this.btnRunHdr.Location = new System.Drawing.Point(457, 251);
             this.btnRunHdr.Name = "btnRunHdr";
-            this.btnRunHdr.Size = new System.Drawing.Size(84, 39);
+            this.btnRunHdr.Size = new System.Drawing.Size(94, 53);
             this.btnRunHdr.TabIndex = 7;
             this.btnRunHdr.Text = "RUN";
-            this.toolTip1.SetToolTip(this.btnRunHdr, "Seelct this to read the\r\nflirst page of data");
+            this.toolTip1.SetToolTip(this.btnRunHdr, "Seelct this to read the\r\nflirst page of data and\r\nform credit averages");
             this.btnRunHdr.UseVisualStyleBackColor = true;
             this.btnRunHdr.Click += new System.EventHandler(this.btnRunHdr_Click);
             // 
@@ -359,7 +360,7 @@
             this.tcProj.Location = new System.Drawing.Point(12, 52);
             this.tcProj.Name = "tcProj";
             this.tcProj.SelectedIndex = 0;
-            this.tcProj.Size = new System.Drawing.Size(592, 689);
+            this.tcProj.Size = new System.Drawing.Size(592, 724);
             this.tcProj.TabIndex = 13;
             // 
             // tabP
@@ -385,7 +386,7 @@
             this.tabP.Location = new System.Drawing.Point(4, 25);
             this.tabP.Name = "tabP";
             this.tabP.Padding = new System.Windows.Forms.Padding(3);
-            this.tabP.Size = new System.Drawing.Size(584, 660);
+            this.tabP.Size = new System.Drawing.Size(584, 695);
             this.tabP.TabIndex = 0;
             this.tabP.Text = "Projects";
             this.tabP.UseVisualStyleBackColor = true;
@@ -443,6 +444,7 @@
             this.btnLoadDefIDs.Text = "Load IDs";
             this.toolTip1.SetToolTip(this.btnLoadDefIDs, "if you first save the IDs\r\nyou can then edit and\r\nadd items using notepad");
             this.btnLoadDefIDs.UseVisualStyleBackColor = true;
+            this.btnLoadDefIDs.Visible = false;
             this.btnLoadDefIDs.Click += new System.EventHandler(this.btnLoadDefIDs_Click);
             // 
             // btnSaveDefIDs
@@ -454,6 +456,7 @@
             this.btnSaveDefIDs.TabIndex = 19;
             this.btnSaveDefIDs.Text = "Save IDs";
             this.btnSaveDefIDs.UseVisualStyleBackColor = true;
+            this.btnSaveDefIDs.Visible = false;
             this.btnSaveDefIDs.Click += new System.EventHandler(this.btnSaveDefIDs_Click);
             // 
             // btnPaste
@@ -537,7 +540,7 @@
             this.TabT.Controls.Add(this.lbSelectDemo);
             this.TabT.Location = new System.Drawing.Point(4, 25);
             this.TabT.Name = "TabT";
-            this.TabT.Size = new System.Drawing.Size(584, 660);
+            this.TabT.Size = new System.Drawing.Size(584, 695);
             this.TabT.TabIndex = 2;
             this.TabT.Text = "Top PCs";
             this.TabT.UseVisualStyleBackColor = true;
@@ -654,7 +657,7 @@
             this.TabL.Location = new System.Drawing.Point(4, 25);
             this.TabL.Name = "TabL";
             this.TabL.Padding = new System.Windows.Forms.Padding(3);
-            this.TabL.Size = new System.Drawing.Size(584, 660);
+            this.TabL.Size = new System.Drawing.Size(584, 695);
             this.TabL.TabIndex = 3;
             this.TabL.Text = "Host List";
             this.TabL.UseVisualStyleBackColor = true;
@@ -841,7 +844,7 @@
             this.TabS.Location = new System.Drawing.Point(4, 25);
             this.TabS.Name = "TabS";
             this.TabS.Padding = new System.Windows.Forms.Padding(3);
-            this.TabS.Size = new System.Drawing.Size(584, 660);
+            this.TabS.Size = new System.Drawing.Size(584, 695);
             this.TabS.TabIndex = 4;
             this.TabS.Text = "Sequencer";
             this.TabS.UseVisualStyleBackColor = true;
@@ -1113,7 +1116,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1377, 740);
+            this.ClientSize = new System.Drawing.Size(1377, 788);
             this.Controls.Add(this.tcProj);
             this.Controls.Add(this.gbGetStats);
             this.Controls.Add(this.menuStrip1);
@@ -1163,7 +1166,7 @@
         private System.Windows.Forms.CheckBox cbfilterSTD;
         private System.Windows.Forms.Label lbHdr;
         private System.Windows.Forms.GroupBox gbSamURL;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbSelProInfo;
         private System.Windows.Forms.Button btnApplyName;
         private System.Windows.Forms.TextBox tbHOSTID;
         private System.Windows.Forms.TabControl tcProj;

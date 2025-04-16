@@ -65,7 +65,7 @@ namespace CreditStatistics
         {
             if (Properties.Settings.Default.HostList != null)
                 bShowHostAvailable = Properties.Settings.Default.HostList.Count() > 0;
-            if(Properties.Settings.Default.AppList != null)
+            if (Properties.Settings.Default.AppList != null)
                 bShowAppsAvailable = Properties.Settings.Default.AppList.Count() > 0;
         }
 
@@ -318,6 +318,11 @@ namespace CreditStatistics
 
         private string[] ReadXmlList(string FolderPath)
         {
+            string sFilepath = Path.Combine(FolderPath, "computers.xml");
+            if(File.Exists(sFilepath))
+            {
+                return GetComputerXML(sFilepath);
+            }
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -338,6 +343,7 @@ namespace CreditStatistics
         private string[] GetComputerXML(string FilePath)
         {
             List<string> PCnames = new List<string>();
+            rtbLocalHostsBT.Clear();
             try
             {
                 using (StreamReader reader = new StreamReader(FilePath))

@@ -36,7 +36,7 @@ using static CreditStatistics.globals.Utils;
 
 namespace CreditStatistics
 {
-    // debugger cmd line: C:\Users\josep\source\repos\Gridcoin-BoincTask-HistoryReader\CreditStatistics\ClientList_in.txt
+    // debugger cmd line: C:\Users\josep\source\repos\CreditStatistics\ClientList_in.txt
     // debugger cmd line: reset
 
     // as generated using mod'ed boinccmd.exe, systems.txt and script: GetHostIDs.cmd
@@ -83,15 +83,11 @@ namespace CreditStatistics
         private TabPage tTabT; // Page1;
         private TabPage tTabH; // Page2;  
         private TabPage tTabS; // Page3;
-   
-
-         
-
+        private bool InAdvancedMode = false;
         private List<string>defaultNameHost = new List<string>();
         private string WorkingFolder = "";
         private string WhereEXE = "";
         bool bHaveHostInfo = false; // have hostname, project names and host ID for project
-        private HostRPC MYrpc = new HostRPC();
         private string SelectedDemo = "";
         public CreditStatistics(string[] args)
         {
@@ -104,7 +100,7 @@ namespace CreditStatistics
             tTabT = tcProj.TabPages["TabT"];
             tTabH = tcProj.TabPages["TabH"];
             tTabS = tcProj.TabPages["TabS"];
-
+            InAdvancedMode = Properties.Settings.Default.AdvancedEnabled;
             ProjectStats.Init();
 
             if (args.Length > 0 )
@@ -157,9 +153,19 @@ namespace CreditStatistics
             {
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+            AdvEnable(InAdvancedMode);
             this.Shown += InitialLoad;            
         }
 
+        private void AdvEnable(bool b)
+        {
+            btnRestoreID.Visible = b;
+            btnSaveDefIDs.Visible = b;
+            btnLoadDefIDs.Visible = b;
+            btnApplyName.Visible = b;
+            tbHOSTID.ReadOnly = !b;
+
+        }
         private void InitialLoad(object sender, EventArgs e)
         {
             //Refresh();
@@ -173,6 +179,19 @@ namespace CreditStatistics
             btnRestoreID.Tag = MyComputerID;
             lbPCname.Text = "PC name: " + MyComputerID;
             GetSavedAppStudy(ref ProjectStats);
+
+            if (InAdvancedMode)
+            {
+
+            }
+            else
+            {
+                lbSelProInfo.Text = @"Select a project and click RUN
+to see the credits you made.
+Click the NEXT to combine
+additional data";
+
+            }
         }
 
         private void FormProjectRB()
@@ -180,6 +199,7 @@ namespace CreditStatistics
             sNames = ProjectStats.GetNames();
             defaultNameHost.Clear();
             int iRow = 0, iCol = 0;
+            int oRow = 110, oCol = 10;
             bool bHasID = false;
             int i = 0;
             foreach (string s in sNames)
@@ -194,7 +214,7 @@ namespace CreditStatistics
                 bHasID = t != "";
                 rb.AutoSize = true;
                 rb.ForeColor = bHasID ? System.Drawing.Color.Blue : System.Drawing.Color.Black;
-                rb.Location = new System.Drawing.Point(10 + iCol * 120, 80 + iRow * 20);
+                rb.Location = new System.Drawing.Point(oCol + iCol * 120, oRow + iRow * 20);
                 rb.CheckedChanged += new System.EventHandler(this.rbProject_CheckedChanged);
                 gbSamURL.Controls.Add(rb);
                 iRow++;
@@ -341,6 +361,10 @@ namespace CreditStatistics
                     SumC.mELA += ci.mELA;
                     SumC.mCPU += ci.mCPU;
                     SumC.nCnt++;
+                }
+                else
+                {
+
                 }
             }
             int n = SumC.nCnt;

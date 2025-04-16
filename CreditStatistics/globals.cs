@@ -658,13 +658,13 @@ namespace CreditStatistics
 
             public static void UseDemoData()
             {
-                Properties.Settings.Default.HostList = JysDemoClient.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                Properties.Settings.Default.HostList = JysDemoClient.ToLower().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                 Properties.Settings.Default.AppList = JYSDemoStudy.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                Properties.Settings.Default.RemoteHosts = JYSDemoStudy.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                Properties.Settings.Default.RemoteHosts = JYSDemoRemote.ToLower().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                 Properties.Settings.Default.Save();
             }
 
-            public static string JysDemoClient = @"
+            private static string JysDemoClient = @"
 amicable: AsusX299 250099,H110btc 247724,JYSOmen 249983,JYSX299 247720
 asteroids: AsusX299 757796,H110btc 801421,JYS-RTX-3070 801550,JYSEVGA3 801930,JYSOmen 785798,JYSX299 739274,Shire2 798739
 cpdn climateprediction: AsusX299 1556725
@@ -691,7 +691,7 @@ wcg worldcommunitygrid: AsusX299 8788717,H110btc 8866993,JYS-RTX-3070 8866995,JY
 yafu: 
 yoyo: AsusX299 517504,H110btc 517506,JYSOmen 517505
 ";
-            public static string JYSDemoStudy = @"
+            private static string JYSDemoStudy = @"
 denis:17
 einstein:0 57 40 58 56 25 60
 gpugrid:41 32 40 38
@@ -709,7 +709,7 @@ srbase:15
 wcg:124 92 94 74
 yafu:15
 ";
-            public static string DemoRemote = @"
+            private static string JYSDemoRemote = @"
 shire2
 AsusX299
 jysx299

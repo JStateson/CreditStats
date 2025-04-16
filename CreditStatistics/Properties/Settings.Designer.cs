@@ -104,5 +104,17 @@ namespace CreditStatistics.Properties {
                 this["AskForDemo"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AdvancedEnabled {
+            get {
+                return ((bool)(this["AdvancedEnabled"]));
+            }
+            set {
+                this["AdvancedEnabled"] = value;
+            }
+        }
     }
 }
