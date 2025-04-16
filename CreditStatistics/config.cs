@@ -29,6 +29,7 @@ namespace CreditStatistics
             HaveStringsData();
             ShowStudy();
             ShowClients(4);
+            HostsChanged = false;
             WorkingFolderLoc.Text = ProjectStats.WhereEXE;
             BoincTaskFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\eFMer\\BoincTasks"; ;
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Space Sciences Laboratory, U.C. Berkeley\BOINC Setup");
@@ -39,20 +40,34 @@ namespace CreditStatistics
                 key.Close();
             }
             rtbLocalHostsBT.Clear();
+            if(!ProjectStats.InDemoMode)
+            {
+                if (ProjectStats.LocalHostList == null)
+                {
+                    ProjectStats.LocalHostList = new string[] { Dns.GetHostName().ToLower() };
+                    Properties.Settings.Default.RemoteHosts = ProjectStats.LocalHostList;
+                    Properties.Settings.Default.Save();
+                }
+            }
+
             btnRunScheduler.Enabled = (ProjectStats.LocalHostList != null);
             if (ProjectStats.LocalHostList != null)
             {
-                AppendColoredText(rtbLocalHostsBT, "Local PCs accessed using 31416" + crlf, Color.Blue);
+                AppendColoredText(rtbLocalHostsBT, "Local PCs using 31416:" + crlf + crlf, Color.Blue);
                 foreach (string s in ProjectStats.LocalHostList)
                 {
                     AppendColoredText(rtbLocalHostsBT, s + crlf, Color.Blue);
                 }
             }
+
+            btnSaveClient.Visible = ProjectStats.InAdvancedMode;
+            btnLoadClient.Visible = ProjectStats.InAdvancedMode;
+            btnSaveAppIDs.Visible = ProjectStats.InAdvancedMode;
+            btnLoadAppIDs.Visible = ProjectStats.InAdvancedMode;
         }
 
 
-        public bool WantsMoreIDs { get; set; }
-        public bool WantsReadBTxml { get; set; }
+        public bool HostsChanged { get; set; }
         public void SetTab(int iWhichTab)
         {
             TabCA.SelectTab(iWhichTab);
@@ -262,6 +277,8 @@ namespace CreditStatistics
                     if(GetHostsSet(ref ProjectStats))
                     {
                         ShowClients(4);
+                        HostsChanged = true;
+                        ProjectStats.InDemoMode = false;
                     }
                     else
                     {
@@ -289,16 +306,9 @@ namespace CreditStatistics
             return bWorked;
         }
 
-
-
         private void btnRunScheduler_Click(object sender, EventArgs e)
         {
             btnScanClients();
-        }
-
-        private void btnFindBTPCs_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void btnSavePClist_Click(object sender, EventArgs e)
@@ -310,6 +320,11 @@ namespace CreditStatistics
 
         private void btnReadBoinc_Click(object sender, EventArgs e)
         {
+            if(ProjectStats.InDemoMode)
+            {
+                DialogResult Res = MessageBox.Show("This may exit the demo mode", "Click OK to continue", MessageBoxButtons.OKCancel);
+                if (Res != DialogResult.OK) return;                  
+            }
             string[] TempHostList = ReadXmlList(BoincTaskFolder.Text);
             if (TempHostList == null) return;
             ProjectStats.LocalHostList = TempHostList;
@@ -323,7 +338,7 @@ namespace CreditStatistics
             {
                 return GetComputerXML(sFilepath);
             }
-
+            /*
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
@@ -337,6 +352,7 @@ namespace CreditStatistics
                     return GetComputerXML(FilePath);
                 }
             }
+            */
             return null;
         }
 
@@ -383,6 +399,7 @@ namespace CreditStatistics
         private void btnUseDemo_Click(object sender, EventArgs e)
         {
             UseDemoData();
+            ProjectStats.InDemoMode = true;
         }
 
         private void SchTimer_Tick(object sender, EventArgs e)

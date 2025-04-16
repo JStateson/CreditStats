@@ -83,7 +83,7 @@ namespace CreditStatistics
         private TabPage tTabT; // Page1;
         private TabPage tTabH; // Page2;  
         private TabPage tTabS; // Page3;
-        private bool InAdvancedMode = false;
+        
         private List<string>defaultNameHost = new List<string>();
         private string WorkingFolder = "";
         private string WhereEXE = "";
@@ -100,7 +100,7 @@ namespace CreditStatistics
             tTabT = tcProj.TabPages["TabT"];
             tTabH = tcProj.TabPages["TabH"];
             tTabS = tcProj.TabPages["TabS"];
-            InAdvancedMode = Properties.Settings.Default.AdvancedEnabled;
+            ProjectStats.InAdvancedMode = Properties.Settings.Default.AdvancedEnabled;
             ProjectStats.Init();
 
             if (args.Length > 0 )
@@ -135,6 +135,7 @@ namespace CreditStatistics
                 if (Res == DialogResult.Yes)
                 {
                     UseDemoData();
+                    ProjectStats.InDemoMode = true;
                     GetSavedAppStudy(ref ProjectStats);
                 }
             }
@@ -153,7 +154,7 @@ namespace CreditStatistics
             {
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            AdvEnable(InAdvancedMode);
+            AdvEnable(ProjectStats.InAdvancedMode);
             this.Shown += InitialLoad;            
         }
 
@@ -180,7 +181,7 @@ namespace CreditStatistics
             lbPCname.Text = "PC name: " + MyComputerID;
             GetSavedAppStudy(ref ProjectStats);
 
-            if (InAdvancedMode)
+            if (ProjectStats.InAdvancedMode)
             {
 
             }
@@ -699,11 +700,24 @@ additional data";
 
         private bool InstallKnownPCurl(string sUrl, ref string sProjectID)
         {
+            string s = sUrl;
             bool bFound = GetPCnameFromURL(ref ProjectStats, sUrl, ref sProjectID);
             if (bFound)
-                InstallURL(sUrl, "");
+                InstallURL(s, "");
             else
-                InstallURL(sUrl, sProjectID);
+            {
+                string sStudy = ProjectStats.GetStudy(s);
+                if(sStudy != "")
+                {
+                    int i = sStudy.IndexOf("X");
+                    string t = sStudy.Substring(0, i);
+                    if(!s.Contains(t))
+                    {
+                        s += t + "0";
+                    }
+                }
+                InstallURL(s, sProjectID);
+            }
             return bFound;
         }
 
@@ -742,10 +756,15 @@ additional data";
                                    ProjectStats.ShortName(TagOfProject);
                                 return;
                             }
+                            else
+                            {
+                                RecordsPerPage = ProcessBody();
+                                return;
+                            }
                         }
                         AllowGS(!ProjectStats.TaskError);
-                        RecordsPerPage = ProcessBody();
-                        ProjectStats.sTaskType = "BODY";
+                        //RecordsPerPage = ProcessBody();
+                        //ProjectStats.sTaskType = "BODY";
                         break;
                     case "BODY":
                         RecordsPerPage = ProcessBody();
@@ -1376,7 +1395,7 @@ additional data";
                 }
                 else
                 {
-                    i = s.IndexOf("?appid=");
+                    i = s.IndexOf("&appid=");
                     if ((i > 0))
                     {
                         int k = FirstNonInteger(s, i + 7);
@@ -1483,7 +1502,24 @@ additional data";
         {
             config DoConfig = new config(ref ProjectStats);
             DoConfig.ShowDialog();
+            bool bNewHosts = DoConfig.HostsChanged;
             DoConfig.Dispose();
+            if (bNewHosts)
+            {
+                ProjectStats.LocalHostList = Properties.Settings.Default.RemoteHosts;
+                if (ProjectStats.LocalHostList != null)
+                {
+                    cbComputerList.DataSource = ProjectStats.ComputerList.ToArray();
+                    gbAllowSeq.Enabled = true;
+                    btnSaveIDs.Enabled = true;
+                    btnSetAll.Enabled = true;
+                    btnClearAll.Enabled = true;
+                    cbComputerList.SelectedIndex = 0;
+                    cbSelProj.SelectedIndex = 0;
+                    string sPC = cbComputerList.SelectedItem.ToString();
+                    RestoreLocalList(sPC);
+                }
+            }
         }
     }
 }

@@ -617,9 +617,9 @@
             this.lbSelectDemo.HorizontalScrollbar = true;
             this.lbSelectDemo.ItemHeight = 16;
             this.lbSelectDemo.Items.AddRange(new object[] {
-            "https://numberfields.asu.edu/NumberFields/results.php?hostid=2883430&state=4&offs" +
+            "https://numberfields.asu.edu/NumberFields/results.php?hostid=2868102&state=4&offs" +
                 "et=0",
-            "https://main.cpdn.org/results.php?hostid=1556725&state=4&offset=0",
+            "https://main.cpdn.org/results.php?hostid=464220&state=4&offset=0",
             "https://lhcathome.cern.ch/lhcathome/results.php?hostid=10835483&offset=0&state=4",
             "https://sech.me/boinc/Amicable/results.php?hostid=220390&state=4&offset=0",
             "https://asteroidsathome.net/boinc/results.php?hostid=726869&state=4&offset=0",
@@ -628,17 +628,16 @@
             "https://moowrap.net/results.php?hostid=1324423&state=4&offset=0",
             "https://escatter11.fullerton.edu/nfs/results.php?hostid=7237359&state=4&offset=0",
             "https://srbase.my-firewall.org/sr5/results.php?hostid=226750&state=4&offset=0",
-            "https://yafu.myfirewall.org/yafu/results.php?hostid=60890&state=4&offset=0",
-            "https://boinc.loda-lang.org/loda/results.php?hostid=125&state=4&offset=0",
-            "https://rake.boincfast.ru/rakesearch/results.php?hostid=21600&state=4&offset=0",
+            "https://yafu.myfirewall.org/yafu/results.php?hostid=59182&state=4&offset=0",
+            "https://boinc.loda-lang.org/loda/results.php?hostid=13566&state=4&offset=0",
+            "https://rake.boincfast.ru/rakesearch/results.php?hostid=18056&state=4&offset=0",
             "http://radioactiveathome.org/boinc/results.php?hostid=45736&state=3&offset=0",
             "https://www.sidock.si/sidock/results.php?hostid=51476&offset=0&show_names=0&state" +
                 "=4&appid=",
             "https://rnma.xyz/boinc/results.php?hostid=23250&state=4&offset=0",
-            "http://radioactiveathome.org/boinc/results.php?hostid=45736&offset=0&state=3",
             "https://boinc.progger.info/odlk/results.php?hostid=29350&state=4&offset=0",
             "https://www.primegrid.com/results.php?hostid=905516&offset=0&state=4",
-            "https://gerasim.boinc.ru/users/viewHostResults.aspx?hostid=70676&opt=2",
+            "https://gerasim.boinc.ru/users/viewHostResults.aspx?hostid=64683&opt=2",
             "https://gpugrid.net/gpugrid/results.php?hostid=635604&offset=0&show_names=0&state" +
                 "=4"});
             this.lbSelectDemo.Location = new System.Drawing.Point(3, 144);

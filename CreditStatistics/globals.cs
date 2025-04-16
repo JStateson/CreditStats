@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
@@ -166,7 +167,7 @@ namespace CreditStatistics
                 // determine if the project uses an application ID and if not then flag default
                 if (ProjectStats.ProjectList[ProjectIndex].sStudy == "null")
                 {
-                    tStudy = "null";
+                    //tStudy = "null";
                     ProjectStats.ProjectList[ProjectIndex].UseDefault = true;
                 }
                 else
@@ -192,7 +193,7 @@ namespace CreditStatistics
                     }
                     else
                     {
-                        i = sUrl.IndexOf("?appid=");
+                        i = sUrl.IndexOf("&appid=");
                         if (i > 0)
                         {
                             j = FirstNonInteger(sUrl, i + 7);
@@ -203,11 +204,19 @@ namespace CreditStatistics
                                 ProjectStats.ProjectList[ProjectIndex].UseDefault = true;
                             }
                             else ProjectStats.ProjectList[ProjectIndex].UseDefault = false;
-                        }
+                        }                        
                         else
                         {
-                            ProjectStats.ProjectList[ProjectIndex].UseDefault = false;
-                        }
+                            i = sUrl.IndexOf("/task/4/");
+                            if(i>0)
+                            {
+                                j = FirstNonInteger(sUrl, i + 8);
+                                t = sUrl.Substring(i + 8, j - i - 8);
+                                ProjectStats.ProjectList[ProjectIndex].sStudyV = t;
+                                ProjectStats.ProjectList[ProjectIndex].UseDefault = true;
+                            }
+                            else ProjectStats.ProjectList[ProjectIndex].UseDefault = false;
+                        }                        
                     }
                 }
 
@@ -247,7 +256,7 @@ namespace CreditStatistics
                 return true;
                 if (tStudy != "null")
                 {
-                    i = sUrl.IndexOf(tStudy); // the /0 or /56 of the /4/xxg or ?appid=xx the x part
+                    i = sUrl.IndexOf(tStudy); // the /0 or /56 of the /4/xx or &appid=xx the x part
                     if (i < 0)
                     {
                         sOut = tURL + tHid + sHost + tValid + tStudy + sPageOffset;
@@ -418,7 +427,6 @@ namespace CreditStatistics
 
             public static int ProcessHDR(ref string RawPage, ref string sOut)
             {
-                //RawPage = ProjectStats.RawPage;
                 if (RawPage == null) return 0;
                 int NumValid = 0;
                 for (int k = 0; k < FindHdr.Length; k++)
@@ -452,10 +460,10 @@ namespace CreditStatistics
                         n = sC.Length;
                         sDFT = tC;
                     }
-                    if (i < 0) return 0;
+                    if (i < 0) continue;
 
                     int j = RawPage.IndexOf(sDFT, i + n);
-                    if (j < 0) return 0;
+                    if (j < 0) continue;
 
                     string t = RawPage.Substring(i + n, j - i - n).Trim();
                     if (t == "") t = "0";
@@ -660,7 +668,7 @@ namespace CreditStatistics
             {
                 Properties.Settings.Default.HostList = JysDemoClient.ToLower().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                 Properties.Settings.Default.AppList = JYSDemoStudy.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                Properties.Settings.Default.RemoteHosts = JYSDemoRemote.ToLower().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                Properties.Settings.Default.RemoteHosts = JYSDemoRemote.ToLower().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);            
                 Properties.Settings.Default.Save();
             }
 

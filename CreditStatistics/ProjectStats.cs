@@ -26,7 +26,7 @@ namespace CreditStatistics
 {
     public class cPSlist
     {
-        public bool UseDefault;   // use tasks/4/0 and omit ?appid=       
+        public bool UseDefault;   // use tasks/4/0 and omit &appid=nn      
 
         public string name;
         public string sURL;
@@ -360,6 +360,8 @@ null
 
         public List<string>ComputerList = new List<string>();   // any PCs the user could find
         public string[] LocalHostList; // remote system managed by boinctasks
+        public bool InAdvancedMode = false;
+        public bool InDemoMode = false;
         public void AddLocalPC(string sPCname)
         {
             if(!ComputerList.Contains(sPCname))
@@ -386,7 +388,7 @@ null
             cPSlist p = ProjectList[iLoc];
             string s = p.sURL + p.sHid + sID + p.sValid + ((p.sStudy == "null") ? "" : p.sStudy + p.sStudyV);
             BaseUrl = s;
-            CannotIncrement = (sPage == "");
+            CannotIncrement = (sPage == "" || p.sPage == "null");
             if (CannotIncrement) return s;
             return s + p.sPage + sPage;
         }
@@ -416,7 +418,7 @@ null
             return true;
         }
 
-        public string GetStudy(string s)
+        public string GetStudy(string s) // s is a url
         {
             foreach (cPSlist c in ProjectList)
             {
@@ -750,6 +752,7 @@ null
             return "";
         }
 
+        public string TaskProjectName = "";
         public string sTaskType = "";    // one of HDR or BODY
         public int NumValid;       // number of valids found in header
         public bool TaskBusy;
@@ -759,7 +762,6 @@ null
         private string PageCommand; // ?offset= etc or empty
         public string RawPage;
         public string RawTable;
-        private string TaskName;       // project name
         public string TaskUrl;      // base url plus the offset
         public string BaseUrl;      // just the url no offset
         public bool CannotIncrement;
@@ -807,8 +809,8 @@ null
             StopTask = false;
             TaskBusy = false;
             TaskDone = false;
-            cPSlist p = ProjectList[jTask];
-            TaskName = p.name;
+            cPSlist p = ProjectList[jTask];            
+            TaskProjectName = ShortName(jTask);
             // jys url is required and can be different from the one created by the previous
             // parse. this need to be cleaned up eventually
             TaskUrl = GetBaseURL(jTask, sHost, sOffset);
@@ -836,7 +838,7 @@ null
             int iStart, iEnd, i, j, k;
             string t;
             NumberRecordsRead = 0;
-            switch (TaskName)
+            switch (TaskProjectName)
             {
                 case "einstein":
                     iStart = RawPage.IndexOf("<tbody>");
@@ -849,15 +851,15 @@ null
                     RawTable = RawPage.Substring(iStart, iEnd - iStart);
                     BuildEinsteinStatsTable();
                     break;
-                case "odlk1 latinsquares":
+                case "odlk1": // latinsquares":
                 case "lhc":
                 case "amicable":
                 case "rosetta":
                 case "milkyway":
                 case "numberfields":
-                case "cpdn climateprediction":
+                case "cpdn": // climateprediction":
                 case "moowrap":
-                case "nfs escatter":
+                case "nfs\": //  escatter":
                 case "srbase":
                 case "yafu":
                 case "loda":
@@ -865,7 +867,7 @@ null
                 case "sidock":
                 case "rnma":
                 case "radioactive":
-                case "odlk progger":
+                case "odlk\": //  progger":
                 case "gpugrid":
                     string strH = "workunit.php?";
                     iStart = RawPage.IndexOf(strH);

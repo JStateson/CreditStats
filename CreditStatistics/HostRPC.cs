@@ -74,81 +74,90 @@ namespace CreditStatistics
                 return -1;
             }
 
-            Socket client = new Socket(ipx.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            client.Connect(new IPEndPoint(ipx, port));
-            byte[] data = Encoding.UTF8.GetBytes(StatisticsRequest);
-            client.ReceiveTimeout = 1000;
-            client.Send(data);
-
             try
             {
-                while (true)
-                {
-                                        
-                    
-                    try
-                    {
-                        n = client.Receive(buffer);
-                       
-                    }
-                    catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                    {
-                        break;
-                    }
-                    catch (SocketException ex)
-                    {
-                        break;
-                    }
 
-                    if (n > 0)
-                    {
-                        string s = Encoding.UTF8.GetString(buffer, 0, n);
-                        sBuff += s;
-                        //if (n < blockSize) break;
-                        continue;
-                    }
-                    else break;
-                }
-                client.Shutdown(SocketShutdown.Both);
-                client.Close();
-                n = 0;
-                int i,j, nRec = 0;
-                sOut += r + hostname + r;
-                i = 0;
-                while (i < sBuff.Length)
+                Socket client = new Socket(ipx.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                client.Connect(new IPEndPoint(ipx, port));
+                byte[] data = Encoding.UTF8.GetBytes(StatisticsRequest);
+                client.ReceiveTimeout = 1000;
+                client.Send(data);
+                try
                 {
-                    int k = sBuff.IndexOf(StartTok[0],i);
-                    if (k < 0)
+                    while (true)
                     {
-                        return Numfound;
+
+                        try
+                        {
+                            n = client.Receive(buffer);
+
+                        }
+                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                        {
+                            break;
+                        }
+                        catch (SocketException ex)
+                        {
+                            break;
+                        }
+
+                        if (n > 0)
+                        {
+                            string s = Encoding.UTF8.GetString(buffer, 0, n);
+                            sBuff += s;
+                            //if (n < blockSize) break;
+                            continue;
+                        }
+                        else break;
                     }
-                    i = k;
-                    j = sBuff.IndexOf(StopTok[0],i);
-                    Debug.Assert(j > 0);
-                    string sPROJ = sBuff.Substring(i + StartTok[0].Length, j - i - StartTok[0].Length);
-                    i += StopTok[0].Length;
-                    k = sBuff.IndexOf(StartTok[1],i);
-                    if (k < 0) 
+                    client.Shutdown(SocketShutdown.Both);
+                    client.Close();
+                    n = 0;
+                    int i, j, nRec = 0;
+                    sOut += r + hostname + r;
+                    i = 0;
+                    while (i < sBuff.Length)
                     {
-                        return Numfound;
+                        int k = sBuff.IndexOf(StartTok[0], i);
+                        if (k < 0)
+                        {
+                            return Numfound;
+                        }
+                        i = k;
+                        j = sBuff.IndexOf(StopTok[0], i);
+                        Debug.Assert(j > 0);
+                        string sPROJ = sBuff.Substring(i + StartTok[0].Length, j - i - StartTok[0].Length);
+                        i += StopTok[0].Length;
+                        k = sBuff.IndexOf(StartTok[1], i);
+                        if (k < 0)
+                        {
+                            return Numfound;
+                        }
+                        i = k;
+                        j = sBuff.IndexOf(StopTok[1], i);
+                        Debug.Assert(j > 0);
+                        string sProjID = sBuff.Substring(i + StartTok[1].Length, j - i - StartTok[1].Length);
+                        i += StopTok[1].Length;
+                        sOut += sPROJ + "," + sProjID + r;
+                        Numfound++;
                     }
-                    i = k;
-                    j = sBuff.IndexOf(StopTok[1], i);
-                    Debug.Assert(j > 0);
-                    string sProjID = sBuff.Substring(i + StartTok[1].Length, j - i - StartTok[1].Length);
-                    i += StopTok[1].Length;
-                    sOut += sPROJ + "," + sProjID + r;
-                    Numfound++;
+                    return Numfound;
+                }
+                finally
+                {
+                    sErr = 0;
+                    bDone = true;
+                    //ProcessOUT(hostname, ref sBuff);
+                    client.Dispose();
                 }
                 return Numfound;
             }
-            finally
+            catch (Exception ex)
             {
-                sErr = 0;
-                bDone = true;
-                //ProcessOUT(hostname, ref sBuff);
-                client.Dispose();
+                MessageBox.Show("Error connecting to " + hostname + ":\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return -1;
             }
+
             return Numfound;
         }
 

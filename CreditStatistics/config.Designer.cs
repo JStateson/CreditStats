@@ -47,7 +47,6 @@
             this.BoincTaskFolder = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.WorkingFolderLoc = new System.Windows.Forms.TextBox();
-            this.btnSavePClist = new System.Windows.Forms.Button();
             this.rtbLocalHostsBT = new System.Windows.Forms.RichTextBox();
             this.tabCLient = new System.Windows.Forms.TabPage();
             this.btnUseDemo = new System.Windows.Forms.Button();
@@ -154,7 +153,6 @@
             this.tabPC.Controls.Add(this.label2);
             this.tabPC.Controls.Add(this.btnReadBoinc);
             this.tabPC.Controls.Add(this.groupBox1);
-            this.tabPC.Controls.Add(this.btnSavePClist);
             this.tabPC.Controls.Add(this.rtbLocalHostsBT);
             this.tabPC.Location = new System.Drawing.Point(4, 25);
             this.tabPC.Name = "tabPC";
@@ -256,17 +254,6 @@
             this.WorkingFolderLoc.ReadOnly = true;
             this.WorkingFolderLoc.Size = new System.Drawing.Size(386, 22);
             this.WorkingFolderLoc.TabIndex = 0;
-            // 
-            // btnSavePClist
-            // 
-            this.btnSavePClist.ForeColor = System.Drawing.Color.Blue;
-            this.btnSavePClist.Location = new System.Drawing.Point(31, 96);
-            this.btnSavePClist.Name = "btnSavePClist";
-            this.btnSavePClist.Size = new System.Drawing.Size(94, 23);
-            this.btnSavePClist.TabIndex = 27;
-            this.btnSavePClist.Text = "Save PC list";
-            this.btnSavePClist.UseVisualStyleBackColor = true;
-            this.btnSavePClist.Click += new System.EventHandler(this.btnSavePClist_Click);
             // 
             // rtbLocalHostsBT
             // 
@@ -401,7 +388,6 @@
         private System.Windows.Forms.Button btnSaveClient;
         private System.Windows.Forms.Button btnRunScheduler;
         private System.Windows.Forms.TabPage tabPC;
-        private System.Windows.Forms.Button btnSavePClist;
         private System.Windows.Forms.RichTextBox rtbLocalHostsBT;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnReadBoinc;
