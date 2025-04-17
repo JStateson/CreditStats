@@ -30,6 +30,7 @@ using static CreditStatistics.cProjectStats;
 using static CreditStatistics.CreditStatistics;
 using static System.Windows.Forms.LinkLabel;
 using static CreditStatistics.globals.Utils;
+using System.Security.Cryptography;
 
 
 
@@ -323,11 +324,12 @@ additional data";
         private void GetResults()
         {
             string sOutInfo = "";
+            int n = 0;
             cCreditInfo SumC = new cCreditInfo();
             double dH = 0;  // hours
             long Sd = 0;
             long Ed = 0;  
-            SumC.Init();
+            SumC.Init(MyComputerID);
             if(!bInSequencer) tbInfo.Clear();
             ApplyFilter();
             string sOutHdrs = "Num" + Rp("     Date Completed", 22) + "    Credit     RunTime     RunTime     CPUtime     CPUtime  Valid" + Environment.NewLine;
@@ -344,7 +346,7 @@ additional data";
                     dH = (double) ((double)(Ed - Sd) / TimeSpan.TicksPerHour);
                 }
                     
-                sOutInfo += Lp((i + 1).ToString(), 2) + " "
+                sOutInfo += Lp((i + 1).ToString(), 3) + " "
                     + Rp(dtS, 22)
                     + Lp(ci.Credits.ToString("F2"), 10)
                     + Lp(ci.ElapsedSecs.ToString("F2"), 12)
@@ -356,19 +358,20 @@ additional data";
 
                 if (ci.bValid)
                 {
+                    SumC.dHours+= dH;
                     SumC.Credits += ci.Credits;
                     SumC.ElapsedSecs += ci.ElapsedSecs;
                     SumC.CPUtimeSecs += ci.CPUtimeSecs;
                     SumC.mELA += ci.mELA;
                     SumC.mCPU += ci.mCPU;
-                    SumC.nCnt++;
+                    n++;
                 }
                 else
                 {
 
                 }
             }
-            int n = SumC.nCnt;
+            SumC.nCnt = n;
             if (n > 0)
             {
                 SumC.mELA /= n;
@@ -377,15 +380,16 @@ additional data";
                 SumC.CPUtimeSecs /= n;
             }
             sOutInfo += Environment.NewLine;
-            sTotals = Lp(SumC.nCnt.ToString(), 2)
-                + Rp("   Hours:" + dH.ToString("F2"), 22) + " "
+            string s1 = Lp(SumC.nCnt.ToString(), 3)
+                + Rp("   Hours:" + dH.ToString("F2").PadLeft(7), 23)
                 + Lp(SumC.Credits.ToString("F2"), 10)
                 + Lp(SumC.ElapsedSecs.ToString("F2"), 12)
                 + Lp(SumC.mELA.ToString("F4"), 12)
                 + Lp(SumC.CPUtimeSecs.ToString("F2"), 12)
                 + Lp(SumC.mCPU.ToString("F4"), 12)
                 + "\r\n";
-            sTotals += Lp(MyComputerID,25) + Lp("Total", 10) // put hostname here
+            
+            sTotals = s1 + Lp(MyComputerID,25) + Lp("Total", 10) // put hostname here
                 + Lp("Avg", 12)
                 + Lp("Avg", 12)
                 + Lp("Avg", 12)
@@ -393,6 +397,15 @@ additional data";
             if(bInSequencer)
             {                
                 SequencerOut += sOutHdrs + Environment.NewLine + sOutInfo + sTotals;
+                ts.SeqOverallText.Add(s1.TrimEnd() + " " + SumC.PCname);
+                double dN = SumC.nCnt;
+                ts.SeqTotals.nCnt += SumC.nCnt;
+                ts.SeqTotals.Credits += SumC.Credits;
+                ts.SeqTotals.ElapsedSecs += dN*SumC.ElapsedSecs;
+                ts.SeqTotals.CPUtimeSecs += dN*SumC.CPUtimeSecs;
+                ts.SeqTotals.mELA += dN * SumC.mELA;
+                ts.SeqTotals.mCPU += dN *  SumC.mCPU;
+                ts.SeqTotals.dHours += SumC.dHours;
             }
             else
             {
@@ -633,6 +646,8 @@ additional data";
             ProjectStats.TaskError = bErr;
             bInSequencer = false;
             pbTask.Value = 0;
+            TaskTimer.Stop();
+            btnRunSeq.Enabled = true;
         }
         private void btCancel_Click(object sender, EventArgs e)
         {
@@ -1188,7 +1203,8 @@ additional data";
         private class cSequencer
         {
             public List<string> SeqResults;
-            public List<string> SeqTotals;
+            public List<string> SeqTotalsText;
+            public List<string> SeqOverallText;
             public List<cEachPc> EachPCsHDR = new List<cEachPc>();
             public int NumPagesToRead;
             public int CurrentPage;
@@ -1197,6 +1213,7 @@ additional data";
             public string sProject;
             public string sHostName;
             public int nLongestName;
+            public cCreditInfo SeqTotals = new cCreditInfo();
             public void Init()
             {
                 EachPCsHDR.Clear();
@@ -1240,11 +1257,11 @@ additional data";
 
         private string FormValidTotals()
         {
-            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName) + "Valid WUs" + Environment.NewLine;
+            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs" + Environment.NewLine;
             for (int i = 0; i < ts.NumUrls; i++)
             {
                 string sTemp = Rp(lbViewRawH.Items[i].ToString(),ts.nLongestName + 4);
-                sOut += sTemp + ts.EachPCsHDR[i].nValidWUs.ToString() + Environment.NewLine;                
+                sOut += sTemp + Lp(ts.EachPCsHDR[i].nValidWUs.ToString(),6) + Environment.NewLine;                
             }
             return sOut;
         }
@@ -1260,12 +1277,14 @@ additional data";
             ts = new cSequencer()
             {
                 SeqResults = new List<string>(),
-                SeqTotals = new List<string>(),
+                SeqTotalsText = new List<string>(),
+                SeqOverallText = new List<string>(),
                 NumPagesToRead = (int)nudPages.Value,
                 CurrentPage = 0,
                 UrlIndex = 0,
                 NumUrls = lbURLtoSequence.Items.Count
             };
+            btnRunSeq.Enabled = false;
             ts.sProject = SelectedProject;
             bInSequencer = true;
             ts.Init();
@@ -1280,7 +1299,8 @@ additional data";
 
         private void SeqFinished()
         {
-            tbInfo.Text = string.Join(Environment.NewLine, ts.SeqTotals) + FormValidTotals();
+            tbInfo.Text = string.Join(Environment.NewLine, ts.SeqTotalsText) + FormValidTotals();
+            btnRunSeq.Enabled = true;
         }
 
         private void Sequencer(string sCmd)
@@ -1300,7 +1320,7 @@ additional data";
                     {
                         ts.SeqResults.Add(SequencerOut);
                         SequencerOut = "";
-                        ts.SeqTotals.Add(sTotals + Environment.NewLine);
+                        ts.SeqTotalsText.Add(sTotals + Environment.NewLine);
                         ts.UrlIndex++;
                         if (ts.UrlIndex >= lbURLtoSequence.Items.Count)
                         {
@@ -1367,8 +1387,26 @@ additional data";
 
             if (n == lbViewRawH.Items.Count-1)
             {
-                tbInfo.Text = string.Join(Environment.NewLine, ts.SeqTotals);
-                tbInfo.Text += FormValidTotals();
+                double dN = ts.SeqTotals.nCnt;
+                ts.SeqTotals.CPUtimeSecs/= dN;
+                ts.SeqTotals.ElapsedSecs /= dN;
+                ts.SeqTotals.mELA /= dN;
+                ts.SeqTotals.mCPU /= dN;
+                // jys todo add name to back of the seqtotalstext
+
+                tbInfo.Text = string.Join(Environment.NewLine, ts.SeqOverallText);
+                cCreditInfo ci = ts.SeqTotals;
+                string sOutInfo = "\r\n"
+    + Lp(ts.SeqTotals.nCnt.ToString(), 3)
+    + Rp("   Hours:" + ci.dHours.ToString("F2").PadLeft(7), 23)
+    + Lp(ci.Credits.ToString("F2"), 10)
+    + Lp(ci.ElapsedSecs.ToString("F2"), 12)
+    + Lp(ci.mELA.ToString("F4"), 12)
+    + Lp(ci.CPUtimeSecs.ToString("F2"), 12)
+    + Lp(ci.mCPU.ToString("F4"), 12)
+    + "\r\n";
+
+                tbInfo.Text += sOutInfo + FormValidTotals();
             }
             else
             {

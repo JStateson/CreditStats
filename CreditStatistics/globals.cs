@@ -25,15 +25,19 @@ namespace CreditStatistics
         public double Credits;
         public double mELA;
         public double mCPU;
-
-        public void Init()
+        public double dHours;
+        public string PCname;
+        public void Init(string sPCame)
         {
             Credits = 0;
             ElapsedSecs = 0;
             CPUtimeSecs = 0;
+            nCnt = 0;
+            dHours = 0;
             mELA = 0;
             mCPU = 0;
             nCnt = 0;
+            PCname = sPCame;
         }
     }
 

@@ -161,7 +161,7 @@
             this.tbInfo.Multiline = true;
             this.tbInfo.Name = "tbInfo";
             this.tbInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbInfo.Size = new System.Drawing.Size(692, 505);
+            this.tbInfo.Size = new System.Drawing.Size(743, 505);
             this.tbInfo.TabIndex = 4;
             // 
             // lbVersion
@@ -185,7 +185,7 @@
             this.gbGetStats.Controls.Add(this.btnStart);
             this.gbGetStats.Location = new System.Drawing.Point(634, 52);
             this.gbGetStats.Name = "gbGetStats";
-            this.gbGetStats.Size = new System.Drawing.Size(731, 676);
+            this.gbGetStats.Size = new System.Drawing.Size(749, 676);
             this.gbGetStats.TabIndex = 10;
             this.gbGetStats.TabStop = false;
             this.gbGetStats.Text = "WU / Credit statistics";
@@ -238,6 +238,7 @@
             this.cbfilterSTD.AutoSize = true;
             this.cbfilterSTD.Checked = true;
             this.cbfilterSTD.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbfilterSTD.Enabled = false;
             this.cbfilterSTD.ForeColor = System.Drawing.Color.Red;
             this.cbfilterSTD.Location = new System.Drawing.Point(545, 76);
             this.cbfilterSTD.Name = "cbfilterSTD";
@@ -1053,7 +1054,7 @@
             this.tsmConfigure});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1377, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1395, 24);
             this.menuStrip1.TabIndex = 14;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -1115,7 +1116,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1377, 788);
+            this.ClientSize = new System.Drawing.Size(1395, 788);
             this.Controls.Add(this.tcProj);
             this.Controls.Add(this.gbGetStats);
             this.Controls.Add(this.menuStrip1);
