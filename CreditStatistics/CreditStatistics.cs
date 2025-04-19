@@ -1,36 +1,17 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Deployment.Application;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Security;
-using System.Security.Policy;
-using System.Security.Principal;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.ComponentModel.Com2Interop;
-using System.Xml;
-using System.Xml.Linq;
 using static CreditStatistics.cProjectStats;
-using static CreditStatistics.CreditStatistics;
-using static System.Windows.Forms.LinkLabel;
 using static CreditStatistics.globals.Utils;
-using System.Security.Cryptography;
 
 
 
@@ -406,6 +387,7 @@ additional data";
                 ts.SeqTotals.mELA += dN * SumC.mELA;
                 ts.SeqTotals.mCPU += dN *  SumC.mCPU;
                 ts.SeqTotals.dHours += SumC.dHours;
+                ts.SumCreSecs.Add(SumC.mELA);
             }
             else
             {
@@ -1188,6 +1170,7 @@ additional data";
             string sUrl = lbURLtoSequence.SelectedItem.ToString();
             if (!string.IsNullOrEmpty(sUrl))
             {
+                SequenceChanged(lbURLtoSequence.SelectedIndex);
                 ProjUrl.Text = sUrl;
                 btnViewUrl.Enabled = true;
             }
@@ -1199,12 +1182,14 @@ additional data";
             public int nValidWUs;
             public int nRemainWUs;
             public bool OutOfData;
+            public double PctEff;   // 100 is best efficiency of all the sytstems
         }
         private class cSequencer
         {
             public List<string> SeqResults;
             public List<string> SeqTotalsText;
             public List<string> SeqOverallText;
+            public List<double> SumCreSecs;
             public List<cEachPc> EachPCsHDR = new List<cEachPc>();
             public int NumPagesToRead;
             public int CurrentPage;
@@ -1214,6 +1199,19 @@ additional data";
             public string sHostName;
             public int nLongestName;
             public cCreditInfo SeqTotals = new cCreditInfo();
+            public void CalcEfficiency()
+            {
+                double d = 0;
+                for (int i = 0; i < NumUrls; i++)
+                {
+                    d = Math.Max(d, SumCreSecs[i]);
+                }
+                for (int i = 0; i < NumUrls; i++)
+                {
+                    EachPCsHDR[i].PctEff = 100 * SumCreSecs[i] / d;
+                }
+            }
+
             public void Init()
             {
                 EachPCsHDR.Clear();
@@ -1257,11 +1255,12 @@ additional data";
 
         private string FormValidTotals()
         {
-            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs" + Environment.NewLine;
+            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs   Efficiency" + Environment.NewLine;
+            ts.CalcEfficiency();
             for (int i = 0; i < ts.NumUrls; i++)
             {
                 string sTemp = Rp(lbViewRawH.Items[i].ToString(),ts.nLongestName + 4);
-                sOut += sTemp + Lp(ts.EachPCsHDR[i].nValidWUs.ToString(),6) + Environment.NewLine;                
+                sOut += sTemp + Lp(ts.EachPCsHDR[i].nValidWUs.ToString(),6) + Lp(ts.EachPCsHDR[i].PctEff.ToString("F2"),9) + Environment.NewLine;                
             }
             return sOut;
         }
@@ -1279,6 +1278,7 @@ additional data";
                 SeqResults = new List<string>(),
                 SeqTotalsText = new List<string>(),
                 SeqOverallText = new List<string>(),
+                SumCreSecs = new List<double>(),
                 NumPagesToRead = (int)nudPages.Value,
                 CurrentPage = 0,
                 UrlIndex = 0,

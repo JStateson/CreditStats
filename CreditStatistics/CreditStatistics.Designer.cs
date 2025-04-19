@@ -205,7 +205,7 @@
             // pbTask
             // 
             this.pbTask.Location = new System.Drawing.Point(307, 33);
-            this.pbTask.Maximum = 60;
+            this.pbTask.Maximum = 80;
             this.pbTask.Name = "pbTask";
             this.pbTask.Size = new System.Drawing.Size(327, 23);
             this.pbTask.TabIndex = 13;
