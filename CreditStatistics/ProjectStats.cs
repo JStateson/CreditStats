@@ -453,6 +453,7 @@ null
                 if (p.name.Contains(name))
                 {
                     string s = p.sURL + p.sHid;
+                    /*
                     if (p.UseDefault)
                     {
                         if (name == "einstein")
@@ -465,6 +466,7 @@ null
                         }
                     }
                     else
+                    */
                     {
                         if (name == "einstein")
                         {

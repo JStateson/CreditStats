@@ -387,7 +387,7 @@ additional data";
                 ts.SeqTotals.mELA += dN * SumC.mELA;
                 ts.SeqTotals.mCPU += dN *  SumC.mCPU;
                 ts.SeqTotals.dHours += SumC.dHours;
-                ts.SumCreSecs.Add(SumC.mELA);
+                ts.SumCreSecs[ts.UrlIndex] = SumC.mELA;
             }
             else
             {
@@ -550,6 +550,7 @@ additional data";
             }
             if (IsInteger(sID))
             {
+                
                 string sURL = ProjectStats.GetURL0(SelectedProject, sID, ref CanPageValids);
                 if (sURL == "")
                 {
@@ -630,6 +631,7 @@ additional data";
             pbTask.Value = 0;
             TaskTimer.Stop();
             btnRunSeq.Enabled = true;
+            lbURLtoSequence.Enabled = true;
         }
         private void btCancel_Click(object sender, EventArgs e)
         {
@@ -858,40 +860,6 @@ additional data";
             }
             return b;
         }
-
-
-
-        /*
-         * used to read a temp file that might still be useful
-                    string[] lines = sOut.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            for(int i = 0; i < ProjectStats.ProjectList.Count(); i++)
-            {
-                ProjectStats.ProjectList[i].Hosts.Clear();
-                ProjectStats.ProjectList[i].HostNames.Clear();
-            }
-
-            foreach (string line in lines)
-            {
-                string[] parts = line.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length >= 2)
-                {
-                    string computerid = parts[0].Trim();
-                    for (int i = 1; i < parts.Length-1; i += 2)
-                    {
-                        string projectName = parts[i].Trim().ToLower();
-                        string hostIDs = parts[i + 1].Trim();
-                        int iLoc = ProjectStats.GetNameIndex(projectName);
-                        if (iLoc < 0)
-                        {
-                            MessageBox.Show("Project name not found: " + projectName);
-                            continue;
-                        }
-                        ProjectStats.ProjectList[iLoc].Hosts.Add(hostIDs);
-                        ProjectStats.ProjectList[iLoc].HostNames.Add(computerid);
-                    }                    
-                }
-            }   
-        */
 
         private void SaveDemoList()
         {
@@ -1208,7 +1176,11 @@ additional data";
                 }
                 for (int i = 0; i < NumUrls; i++)
                 {
-                    EachPCsHDR[i].PctEff = 100 * SumCreSecs[i] / d;
+                    if (d > 0)
+                    {
+                        EachPCsHDR[i].PctEff = 100 * SumCreSecs[i] / d;
+                    }
+                    else EachPCsHDR[i].PctEff = 0;
                 }
             }
 
@@ -1222,6 +1194,7 @@ additional data";
                     cEP.nValidWUs = 0;
                     cEP.OutOfData = false;
                     EachPCsHDR.Add(cEP);
+                    SumCreSecs.Add(0);
                 }
             }
             public bool OutOfData()
@@ -1255,7 +1228,8 @@ additional data";
 
         private string FormValidTotals()
         {
-            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs   Efficiency" + Environment.NewLine;
+            string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs   Efficiency  " +
+                SelectedProject + Environment.NewLine;
             ts.CalcEfficiency();
             for (int i = 0; i < ts.NumUrls; i++)
             {
@@ -1285,6 +1259,7 @@ additional data";
                 NumUrls = lbURLtoSequence.Items.Count
             };
             btnRunSeq.Enabled = false;
+            lbURLtoSequence.Enabled = false;
             ts.sProject = SelectedProject;
             bInSequencer = true;
             ts.Init();
@@ -1301,6 +1276,7 @@ additional data";
         {
             tbInfo.Text = string.Join(Environment.NewLine, ts.SeqTotalsText) + FormValidTotals();
             btnRunSeq.Enabled = true;
+            lbURLtoSequence.Enabled = true;
         }
 
         private void Sequencer(string sCmd)

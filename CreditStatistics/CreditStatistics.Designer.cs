@@ -1010,7 +1010,7 @@
             // btnRunSeq
             // 
             this.btnRunSeq.ForeColor = System.Drawing.Color.Blue;
-            this.btnRunSeq.Location = new System.Drawing.Point(412, 87);
+            this.btnRunSeq.Location = new System.Drawing.Point(412, 81);
             this.btnRunSeq.Name = "btnRunSeq";
             this.btnRunSeq.Size = new System.Drawing.Size(120, 51);
             this.btnRunSeq.TabIndex = 16;
