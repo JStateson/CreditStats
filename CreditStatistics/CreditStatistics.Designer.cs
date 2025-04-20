@@ -412,6 +412,7 @@
             this.cbStudy.Name = "cbStudy";
             this.cbStudy.Size = new System.Drawing.Size(300, 24);
             this.cbStudy.TabIndex = 24;
+            this.cbStudy.Visible = false;
             // 
             // label9
             // 
@@ -423,6 +424,7 @@
             this.label9.Size = new System.Drawing.Size(189, 14);
             this.label9.TabIndex = 23;
             this.label9.Text = "Study or type of Work Unit";
+            this.label9.Visible = false;
             // 
             // label8
             // 
