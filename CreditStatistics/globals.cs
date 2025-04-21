@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
@@ -43,6 +44,33 @@ namespace CreditStatistics
 
     internal class globals
     {
+        public static int Timeout(string sTimeout, string sType)
+        {
+            int vSecs = 0;
+            int iMin = 1;
+            int iMax = 10;
+            if ((sType == "proj"))
+            {
+                iMin = 60;
+                iMax = 240;
+            }
+            if (int.TryParse(sTimeout, out vSecs))
+            {
+                if (vSecs < iMin) vSecs = iMin;
+                if(vSecs > iMax) vSecs = iMax;
+                if(sType == "proj")                
+                    Properties.Settings.Default.TimeoutProj = vSecs;                
+                else
+                    Properties.Settings.Default.TimeoutPC = vSecs;
+
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                vSecs = Properties.Settings.Default.TimeoutProj;
+            }
+            return vSecs;
+        }
         public static class Utils
         {
             // pad right side with spaces to fill

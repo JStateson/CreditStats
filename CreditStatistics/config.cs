@@ -21,7 +21,8 @@ namespace CreditStatistics
     public partial class config : Form
     {
         private cProjectStats ProjectStats;
-        string crlf = Environment.NewLine;
+        private string crlf = Environment.NewLine;
+        private int RPCtimeout = 1;
         public config(ref cProjectStats rProjectStats)
         {
             InitializeComponent();
@@ -49,7 +50,9 @@ namespace CreditStatistics
                     Properties.Settings.Default.Save();
                 }
             }
-
+            tbTimeoutProj.Text = Properties.Settings.Default.TimeoutProj.ToString();
+            tbTimeoutPC.Text = Properties.Settings.Default.TimeoutPC.ToString();
+            cbAdv.Checked = Properties.Settings.Default.AdvancedEnabled;
             btnRunScheduler.Enabled = (ProjectStats.LocalHostList != null);
             if (ProjectStats.LocalHostList != null)
             {
@@ -241,19 +244,25 @@ namespace CreditStatistics
         private int iCurrentHOST = 0;
         private int iHostCount = 0;
         private HostRPC MYrpc = new HostRPC();
+        private string BadHostList = "";
         private void btnScanClients()
         {
             bInScheduler = true;
+            BadHostList = "";
             if (ProjectStats.LocalHostList == null)
             {
                 return;
             }
             iHostCount = ProjectStats.LocalHostList.Count();
+            pbTask.Maximum = iHostCount * 10;
             bool bWorked = false;
             if (iHostCount > 0)
             {
                 iCurrentHOST = 0;
-                MYrpc.InitScheduler();
+                string s = tbTimeoutPC.Text;
+                RPCtimeout = globals.Timeout(s, "pc");
+                tbTimeoutPC.Text = RPCtimeout.ToString();
+                MYrpc.InitScheduler(RPCtimeout);
                 SchTimer.Start();
                 bWorked = StartScheduler();
             }
@@ -261,8 +270,15 @@ namespace CreditStatistics
 
         private bool StartScheduler()
         {
-            int n = MYrpc.ReadStream(ProjectStats.LocalHostList[iCurrentHOST].ToString());
-            return n > 0;
+            string s = ProjectStats.LocalHostList[iCurrentHOST].ToString(); 
+            int n = MYrpc.ReadStream(s);
+            bool b = (n > 0);
+            if(!b)
+            {
+                BadHostList += s + " ";
+            }
+            pbTask.Value = iCurrentHOST * 10;
+            return b;
         }
         private bool ScheduleNext()
         {
@@ -270,7 +286,7 @@ namespace CreditStatistics
             bool bWorked = false;
             if (iCurrentHOST == iHostCount)
             {
-                SchTimer.Stop();
+                SchTimer.Stop(); // no longer does anything but I may want to use it 
                 pbTask.Value = 0;
                 if (ProjectStats.GetHosts(MYrpc.GetSchedulerResults().ToLower()))
                 {
@@ -284,7 +300,10 @@ namespace CreditStatistics
                     {
                         MessageBox.Show("Error reading host list");
                     }
-
+                    if(BadHostList.Length > 0)
+                    {
+                        MessageBox.Show("The following hosts were not found: " + BadHostList);
+                    }
                 }
                 else
                 {
@@ -308,6 +327,7 @@ namespace CreditStatistics
 
         private void btnRunScheduler_Click(object sender, EventArgs e)
         {
+            rtfClient.Clear();
             btnScanClients();
         }
 
@@ -420,6 +440,13 @@ namespace CreditStatistics
                 }
                 return;
             }
+        }
+
+        private void config_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.AdvancedEnabled = cbAdv.Checked;
+            Properties.Settings.Default.TimeoutProj = globals.Timeout(tbTimeoutProj.Text,"proj");
+            Properties.Settings.Default.TimeoutPC = globals.Timeout(tbTimeoutPC.Text, "pc");
         }
     }
 }

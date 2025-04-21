@@ -55,8 +55,13 @@
             this.btnSaveClient = new System.Windows.Forms.Button();
             this.rtfClient = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.SchTimer = new System.Windows.Forms.Timer(this.components);
             this.pbTask = new System.Windows.Forms.ProgressBar();
+            this.cbAdv = new System.Windows.Forms.CheckBox();
+            this.tbTimeoutProj = new System.Windows.Forms.TextBox();
+            this.tbTimeoutPC = new System.Windows.Forms.TextBox();
             this.TabCA.SuspendLayout();
             this.tabStudy.SuspendLayout();
             this.tabPC.SuspendLayout();
@@ -338,28 +343,81 @@
             this.rtfClient.TabIndex = 0;
             this.rtfClient.Text = "";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(482, 36);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(163, 16);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "Project timeout in seconds";
+            this.toolTip1.SetToolTip(this.label3, "stop waiting for a single\r\nprojects response or stop\r\ntrying to access local PCs");
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(482, 78);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(107, 16);
+            this.label4.TabIndex = 28;
+            this.label4.Text = "Local PC timeout";
+            this.toolTip1.SetToolTip(this.label4, "stop waiting for a single\r\nPC to respond to an RPC");
+            // 
             // SchTimer
             // 
-            this.SchTimer.Interval = 800;
+            this.SchTimer.Interval = 1000;
             this.SchTimer.Tick += new System.EventHandler(this.SchTimer_Tick);
             // 
             // pbTask
             // 
-            this.pbTask.Location = new System.Drawing.Point(371, 26);
+            this.pbTask.Location = new System.Drawing.Point(699, 30);
             this.pbTask.Maximum = 60;
             this.pbTask.Name = "pbTask";
             this.pbTask.Size = new System.Drawing.Size(327, 23);
             this.pbTask.TabIndex = 24;
+            // 
+            // cbAdv
+            // 
+            this.cbAdv.AutoSize = true;
+            this.cbAdv.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbAdv.Location = new System.Drawing.Point(160, 36);
+            this.cbAdv.Name = "cbAdv";
+            this.cbAdv.Size = new System.Drawing.Size(126, 20);
+            this.cbAdv.TabIndex = 25;
+            this.cbAdv.Text = "Advanced Mode";
+            this.cbAdv.UseVisualStyleBackColor = true;
+            // 
+            // tbTimeoutProj
+            // 
+            this.tbTimeoutProj.Location = new System.Drawing.Point(423, 33);
+            this.tbTimeoutProj.Name = "tbTimeoutProj";
+            this.tbTimeoutProj.Size = new System.Drawing.Size(45, 20);
+            this.tbTimeoutProj.TabIndex = 27;
+            // 
+            // tbTimeoutPC
+            // 
+            this.tbTimeoutPC.Location = new System.Drawing.Point(423, 75);
+            this.tbTimeoutPC.Name = "tbTimeoutPC";
+            this.tbTimeoutPC.Size = new System.Drawing.Size(45, 20);
+            this.tbTimeoutPC.TabIndex = 29;
             // 
             // config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1068, 669);
+            this.Controls.Add(this.tbTimeoutPC);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.tbTimeoutProj);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cbAdv);
             this.Controls.Add(this.pbTask);
             this.Controls.Add(this.TabCA);
             this.Name = "config";
             this.Text = "config";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.config_FormClosing);
             this.TabCA.ResumeLayout(false);
             this.tabStudy.ResumeLayout(false);
             this.tabStudy.PerformLayout();
@@ -369,6 +427,7 @@
             this.groupBox1.PerformLayout();
             this.tabCLient.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -401,5 +460,10 @@
         private System.Windows.Forms.Button btnUseDemo;
         private System.Windows.Forms.Timer SchTimer;
         private System.Windows.Forms.ProgressBar pbTask;
+        private System.Windows.Forms.CheckBox cbAdv;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbTimeoutProj;
+        private System.Windows.Forms.TextBox tbTimeoutPC;
+        private System.Windows.Forms.Label label4;
     }
 }

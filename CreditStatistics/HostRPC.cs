@@ -21,9 +21,11 @@ namespace CreditStatistics
         public static int sErr = 0;
         public static bool bInScheduler = false;
         public static string sBuff;
-        public void InitScheduler()
+        private static int MStimeout = 1000;
+        public void InitScheduler(int iTimeout)
         {
             sOut = "";
+            MStimeout = iTimeout * 1000;
             bInScheduler = true;
         }
 
@@ -78,9 +80,37 @@ namespace CreditStatistics
             {
 
                 Socket client = new Socket(ipx.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                client.Connect(new IPEndPoint(ipx, port));
+                client.ReceiveTimeout = MStimeout;
+                client.SendTimeout = MStimeout;
                 byte[] data = Encoding.UTF8.GetBytes(StatisticsRequest);
-                client.ReceiveTimeout = 1000;
+
+                client.Blocking = false;
+                //client.Connect(new IPEndPoint(ipx, port));
+                try
+                {
+                    client.Connect(new IPEndPoint(ipx, port));
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.WouldBlock || ex.SocketErrorCode == SocketError.InProgress)
+                {
+                    if (!client.Poll(MStimeout, SelectMode.SelectWrite))
+                    {
+                        client.Close();
+                        throw new TimeoutException("Connection timed out.");
+                    }
+
+                    // Check for connection success
+                    if (!client.Connected)
+                    {
+                        client.Close();
+                        throw new SocketException((int)SocketError.NotConnected);
+                    }
+                }
+                finally
+                {
+                    client.Blocking = true;
+                }
+
+
                 client.Send(data);
                 try
                 {
@@ -90,12 +120,11 @@ namespace CreditStatistics
                         try
                         {
                             n = client.Receive(buffer);
-
                         }
-                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                        {
-                            break;
-                        }
+                        //catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                        //{
+                        //    break;
+                        //}
                         catch (SocketException ex)
                         {
                             break;
@@ -113,7 +142,7 @@ namespace CreditStatistics
                     client.Shutdown(SocketShutdown.Both);
                     client.Close();
                     n = 0;
-                    int i, j, nRec = 0;
+                    int i, j;
                     sOut += r + hostname + r;
                     i = 0;
                     while (i < sBuff.Length)
@@ -154,7 +183,7 @@ namespace CreditStatistics
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error connecting to " + hostname + ":\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show("Error connecting to " + hostname + ":\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return -1;
             }
 

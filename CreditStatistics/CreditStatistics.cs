@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,7 +66,8 @@ namespace CreditStatistics
         private TabPage tTabT; // Page1;
         private TabPage tTabH; // Page2;  
         private TabPage tTabS; // Page3;
-        
+        private bool ManualCancel = false;
+        private string BadHostList = "";
         private List<string>defaultNameHost = new List<string>();
         private string WorkingFolder = "";
         private string WhereEXE = "";
@@ -290,7 +292,7 @@ additional data";
             {
                 cNAS.data = null;
                 cNAS.outlierIndexes = null;
-                (cNAS.data, cNAS.outlierIndexes) = RemoveOutliersWithIndexes(ref mCPU, 2.0);
+                (cNAS.data, cNAS.outlierIndexes) = RemoveOutliersWithIndexes(ref mELA, 2.0);
                 for (int k = 0; k < cNAS.outlierIndexes.Count; k++)
                 {
                     CreditInfo[k].bValid = false;
@@ -635,6 +637,7 @@ additional data";
         }
         private void btCancel_Click(object sender, EventArgs e)
         {
+            ManualCancel = true;
             RunCancel(true);
         }
 
@@ -735,11 +738,16 @@ additional data";
             if (pbTask.Value >= pbTask.Maximum || ProjectStats.TaskDone)
             {
                 TaskTimer.Stop();
-                if(!bInSequencer)
+                //if(!bInSequencer)
                     pbTask.Value = 0;
                 if(ProjectStats.TaskDone == false)
                 {
-                    RunCancel(true);
+                    if(!ManualCancel)
+                    {
+                        // timed out but may want to continue on to next host
+                        BadHostList += MyComputerID + " ";
+                        Sequencer("VOID");
+                    }
                 }
                 switch (ProjectStats.sTaskType)
                 {
@@ -758,10 +766,11 @@ additional data";
                             else
                             {
                                 RecordsPerPage = ProcessBody();
+                                AllowGS(!ProjectStats.TaskError);
                                 return;
                             }
                         }
-                        AllowGS(!ProjectStats.TaskError);
+                        //AllowGS(!ProjectStats.TaskError);
                         //RecordsPerPage = ProcessBody();
                         //ProjectStats.sTaskType = "BODY";
                         break;
@@ -1258,6 +1267,9 @@ additional data";
                 UrlIndex = 0,
                 NumUrls = lbURLtoSequence.Items.Count
             };
+            pbTask.Maximum = Properties.Settings.Default.TimeoutProj;
+            ManualCancel = false;
+            BadHostList = "";
             btnRunSeq.Enabled = false;
             lbURLtoSequence.Enabled = false;
             ts.sProject = SelectedProject;
