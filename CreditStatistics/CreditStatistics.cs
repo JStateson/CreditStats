@@ -24,8 +24,11 @@ namespace CreditStatistics
 
     // as generated using mod'ed boinccmd.exe, systems.txt and script: GetHostIDs.cmd
 
+    
     public partial class CreditStatistics : Form
     {
+        private cNoHeaderProj NoHeaderProj = new cNoHeaderProj();
+
         private string SequencerOut = "";   // used when running sequencer instead of output to text box
         private bool bInSequencer = false;
 
@@ -434,8 +437,12 @@ additional data";
                 ProjectStats.RawPage = "";
                 using (HttpClient client = new HttpClient())
                 {
-                    //client.DefaultRequestHeaders.Add("Referer", ProjectStats.TaskUrl);
-                    //client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+                    if (ProjectStats.sCountValids == "yoyo" || ProjectStats.sCountValids == "wcg")
+                    {
+                        client.DefaultRequestHeaders.Add("Referer", ProjectStats.TaskUrl);
+                        client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+                    }
+
                     client.DefaultRequestHeaders.Add("User-Agent",
                         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
@@ -470,6 +477,10 @@ additional data";
             mCPU.Clear();
             mELA.Clear();
             CreditInfo.Clear();
+            if (ProjectStats.sCountValids == "yoyo" || ProjectStats.sCountValids == "wcg")
+            {
+                NoHeaderProj.Init(ProjectStats.sCountValids);
+            }
             TaskStart();
         }
 
@@ -496,7 +507,7 @@ additional data";
                     break;
                 case "yoyo": // 2025 may 12
                 case "wcg": // 2025 may 12
-                    tbInfo.Text = "This project not implemented yet";
+                    Debug.Assert(false);
                     break;
             }
             return n;
@@ -756,9 +767,25 @@ additional data";
                 switch (ProjectStats.sTaskType)
                 {
                     case "HDR":
-                        if (ProjectStats.sCountValids == "yoyo" || ProjectStats.sCountValids == "wcg")
+
+                        if (ProjectStats.sCountValids == "wcg")
                         {
-                            RecordsPerPage = ProcessBody();
+                            tbHdrInfo.Text = "";
+                            tbInfo.Text = "WCG requies a password to access the data unlike other projects";
+                            return;
+                        }
+
+                        if (ProjectStats.sCountValids == "yoyo")
+                        {
+                            RecordsPerPage = NoHeaderProj.ProcessRawBodyYOYO(ref ProjectStats.RawPage);  
+                            if(RecordsPerPage > 0)
+                            {
+                                ProjectStats.GetTableFromNoHeader(ref NoHeaderProj);
+                                CreditInfo = ProjectStats.LCreditInfo;
+                                GetResults();
+                                tbHdrInfo.Text = NoHeaderProj.GetHDR();
+                            }
+
                             AllowGS(!ProjectStats.TaskError);
                             return;
                         }

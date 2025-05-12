@@ -110,7 +110,6 @@
       <DependentUpon>help.cs</DependentUpon>
     </Compile>
     <Compile Include="HostRPC.cs" />
-    <Compile Include="NoHeaders.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing.Text;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -16,28 +17,77 @@ using static System.Windows.Forms.LinkLabel;
 
 namespace CreditStatistics
 {
-
+    
     public class cNoHeaderProj
     {
+        private string nl = Environment.NewLine;
         public int nAll;
         public int nValid;
         public int nInvalid;
         public int nError;
+        public int nInProgress;
         public string sProjectName;
         public List<cNoHeaderBody> NoHdrList = new List<cNoHeaderBody>();
+
+        public string GetHDR()
+        {
+            return "All (" + nAll.ToString() + ") " + nl  +
+                "Valid (" + nValid.ToString() + ") " + nl +
+                "Invalid (" + nInvalid.ToString() + ") " + nl +
+                "Error (" + nError.ToString() + ")" + nl +
+                "In progress (" + nInProgress.ToString() + ")" + nl;
+        }
         public void Init(string sPJname)
         {
-            nAll = 0; nValid = 0; nInvalid = 0; nError = 0;
+            nAll = 0; nValid = 0; nInvalid = 0; nError = 0; nInProgress = 0;
             NoHdrList.Clear();
             sProjectName = sPJname;
         }
         public void AddBody(ref cNoHeaderBody Body)
         {
             NoHdrList.Add(Body);
+            nValid++;
             nAll++;
-            if (Body.bValid) nValid++;
-            if (Body.bInvalid) nInvalid++;
-            if (Body.bError) nError++;
+        }
+        public int ProcessRawBodyYOYO(ref string sRaw)
+        {
+            int n = 0;
+            int iStart = sRaw.IndexOf("<h2>Results for computer</h2>");
+            if (iStart < 0) return 0;
+            iStart = sRaw.IndexOf("</tr>", iStart);
+            iStart += 5;
+            int iEnd = sRaw.IndexOf("</table>", iStart);
+            string[] spara = sRaw.Substring(iStart, iEnd - iStart).Split(new string[] { "<tr>" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string s in spara)
+            {
+                string[] sS = s.Split(new string[] { "<td>" }, StringSplitOptions.RemoveEmptyEntries);
+                if (sS.Length == 10)
+                {
+                    if (sS[5].Contains("Success"))
+                    {
+                        cNoHeaderBody Body = new cNoHeaderBody();
+                        Body.AddGranted(sS[9]);
+                        Body.AddCpuEla(sS[7]);
+                        Body.AddDate(sS[3]);                        
+                        //3,7,9 are date, seconds, granted
+                        //NoHdrList.Add(Body);
+                        AddBody(ref Body);
+                        n++;
+                    }
+                    else
+                    {
+                        nAll++;
+                        n++;
+                        if (sS[5].Contains("Validate"))
+                            nInvalid++;
+                        else if (sS[5].Contains("Error"))
+                            nError++;
+                        else if (sS[5].Contains("Unknown"))
+                            nInProgress++;
+                    }
+                }
+            }
+            return n;
         }
     }
     public class cNoHeaderBody
@@ -49,6 +99,33 @@ namespace CreditStatistics
         public double ElapsedSecs;
         public double CPUtimeSecs;
         public double Credits;
+        private string sNoTD(string s)
+        {
+            int i = s.IndexOf("</td>");
+            Debug.Assert(i > 0);
+            return s.Substring(0, i).Trim();
+        }
+        public void AddDate(string sTD)
+        {
+            string s = sNoTD(sTD);
+            int i = s.IndexOf("UTC");
+            if(i > 0)
+            {
+                s = s.Substring(0, i).Trim();
+            }
+            tCompleted = DateTime.Parse(s).ToUniversalTime();
+        }
+        public void AddCpuEla(string sTD)
+        {
+            string s = sNoTD(sTD);
+            CPUtimeSecs = double.Parse(s, NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+            ElapsedSecs = CPUtimeSecs;
+        }
+        public void AddGranted(string sTD)
+        {
+            string s = sNoTD(sTD);
+            Credits = double.Parse(s, NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
+        }
     }
     public class cCreditInfo
     {
@@ -71,7 +148,6 @@ namespace CreditStatistics
             dHours = 0;
             mELA = 0;
             mCPU = 0;
-            nCnt = 0;
             PCname = sPCame;
         }
     }

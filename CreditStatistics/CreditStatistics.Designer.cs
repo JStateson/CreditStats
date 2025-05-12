@@ -321,14 +321,14 @@
             this.tbHdrInfo.Location = new System.Drawing.Point(429, 159);
             this.tbHdrInfo.Multiline = true;
             this.tbHdrInfo.Name = "tbHdrInfo";
-            this.tbHdrInfo.Size = new System.Drawing.Size(135, 82);
+            this.tbHdrInfo.Size = new System.Drawing.Size(135, 99);
             this.tbHdrInfo.TabIndex = 8;
             // 
             // btnRunHdr
             // 
             this.btnRunHdr.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRunHdr.ForeColor = System.Drawing.Color.Blue;
-            this.btnRunHdr.Location = new System.Drawing.Point(457, 251);
+            this.btnRunHdr.Location = new System.Drawing.Point(470, 276);
             this.btnRunHdr.Name = "btnRunHdr";
             this.btnRunHdr.Size = new System.Drawing.Size(94, 53);
             this.btnRunHdr.TabIndex = 7;
@@ -599,11 +599,11 @@
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.Coral;
-            this.label4.Location = new System.Drawing.Point(21, 16);
+            this.label4.Location = new System.Drawing.Point(12, 16);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(124, 32);
+            this.label4.Size = new System.Drawing.Size(156, 32);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Not Programmed\r\n  yoyo, wcg";
+            this.label4.Text = "World community grid\r\nforbids public access";
             // 
             // tbSelected
             // 

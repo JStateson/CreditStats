@@ -846,6 +846,36 @@ null
             }
         }
 
+        public void GetTableFromNoHeader(ref cNoHeaderProj noHeaderProj)
+        {
+            UnsortedLCI.Clear();
+            UnsortedDT.Clear();
+            mELA.Clear();
+            mCPU.Clear();
+            foreach (cNoHeaderBody nhb in noHeaderProj.NoHdrList)
+            {
+                if (nhb != null)
+                {
+                    cCreditInfo ci = new cCreditInfo();
+                    ci.tCompleted = nhb.tCompleted;
+                    ci.ElapsedSecs = nhb.ElapsedSecs;
+                    ci.CPUtimeSecs = nhb.CPUtimeSecs;
+                    ci.Credits = nhb.Credits;
+                    if (ci.CPUtimeSecs == 0.0) ci.CPUtimeSecs = 0.01;
+                    ci.mCPU = ci.Credits / ci.CPUtimeSecs;
+                    ci.mELA = nhb.CPUtimeSecs;
+                    mELA.Add(ci.mELA);
+                    mCPU.Add(ci.mCPU);
+                    ci.bValid = true;
+                    ci.nCnt = 0;    // 2025 seems to be used when averaging ???
+                    UnsortedLCI.Add(ci);
+                    UnsortedDT.Add(ci.tCompleted);
+                }
+            }
+            if (UnsortedDT.Count > 0)
+                RunDTsort();
+        }
+
         public int GetTableFromRaw()
         {
             int iStart, iEnd, i, j, k;
@@ -855,6 +885,7 @@ null
             {
                 case "yoyo":
                 case "wcg":
+                    Debug.Assert(false);
                     break;
                 case "einstein":
                     iStart = RawPage.IndexOf("<tbody>");
