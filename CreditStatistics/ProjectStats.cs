@@ -119,7 +119,7 @@ hostid=
 einstein
 https://einsteinathome.org
 /host/
-/tasks/4
+/tasks/4/0
 /
 0
 ?page=
@@ -267,16 +267,16 @@ null
 null
 null
 &offset=
-null
+yoyo
 
 WCG WORLDCOMMUNITYGRID WORLD
 https://www.worldcommunitygrid.org/contribution
-/device?id=
+?deviceid=
 &type=B
-?projectId=
+&projectId=
 124
 null
-null
+wcg
 
 radioactive
 http://radioactiveathome.org/boinc/results.php?
@@ -296,7 +296,7 @@ null
 &offset=
 null
 "
-        .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         // lookup project
 
@@ -386,7 +386,12 @@ null
         private string GetBaseURL(int iLoc, string sID, string sPage)
         {
             cPSlist p = ProjectList[iLoc];
-            string s = p.sURL + p.sHid + sID + p.sValid + ((p.sStudy == "null") ? "" : p.sStudy + p.sStudyV);
+            if(p.sValid == "null")
+            {
+                // 2025 may 12 sID = "";
+            }   
+            //string s = p.sURL + p.sHid + sID + p.sValid; // 2025 may 12 + ((p.sStudy == "null") ? "" : p.sStudy + p.sStudyV);
+            string s = p.sURL + p.sHid + sID + ((p.sValid == "null") ? "" : p.sValid);
             BaseUrl = s;
             CannotIncrement = (sPage == "" || p.sPage == "null");
             if (CannotIncrement) return s;
@@ -400,8 +405,13 @@ null
             cPSlist p = ProjectList[ProjectID];
             sURL = p.sURL;
             sHid = p.sHid;
-            sValid = p.sValid;
+            // 2025 may 12 sValid = p.sValid;
+            sValid = (p.sValid == "null") ? "" : p.sValid;  
             sPage = p.sPage;
+            sStudy = p.sStudy;
+            /*
+            //return true;
+            // 2025 jys do mess with the appid
             if (p.UseDefault)
             {
                 if (p.name == "einstein")
@@ -414,6 +424,7 @@ null
             {
                 sStudy = p.sStudy + p.sStudyV;
             }
+            */
             sCountValids = p.sCountValids;
             return true;
         }
@@ -470,7 +481,7 @@ null
                     {
                         if (name == "einstein")
                         {
-                            sE = p.sValid + p.sStudy + p.sStudyV;
+                            sE = p.sValid;//2025 may 12 + p.sStudy + p.sStudyV;
                         }
                         else
                         {
@@ -480,7 +491,7 @@ null
                                 sNE = p.sValid;
                                 if (p.sStudy != "null")
                                 {
-                                    sNE += p.sStudy + p.sStudyV;
+                                    ;// 2025 may 12 sNE += p.sStudy + p.sStudyV;
                                 }
                             }
                         }
@@ -493,7 +504,7 @@ null
                         return s;
                     }
 
-                    if (p.sValid == "/tasks/4")
+                    if (p.sValid == "/tasks/4/0")   // 2025 may 12 this is einstein
                     {
                         s += sE;
                         s += p.sPage + "0"; // jys cannot be 0
@@ -842,6 +853,9 @@ null
             NumberRecordsRead = 0;
             switch (TaskProjectName)
             {
+                case "yoyo":
+                case "wcg":
+                    break;
                 case "einstein":
                     iStart = RawPage.IndexOf("<tbody>");
                     iEnd = RawPage.IndexOf("</tbody>");
@@ -862,6 +876,7 @@ null
                 case "cpdn": // climateprediction":
                 case "moowrap":
                 case "nfs\": //  escatter":
+                case "nfs": // why backslash above??? 
                 case "srbase":
                 case "yafu":
                 case "loda":
@@ -871,6 +886,7 @@ null
                 case "radioactive":
                 case "odlk\": //  progger":
                 case "gpugrid":
+                case "denis":
                     string strH = "workunit.php?";
                     iStart = RawPage.IndexOf(strH);
                     if (iStart < 0)

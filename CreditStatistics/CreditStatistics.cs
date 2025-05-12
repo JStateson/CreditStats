@@ -244,9 +244,9 @@ additional data";
 
         private void rbProject_CheckedChanged(object sender, EventArgs e)
         {
-            RadioButton rb = (RadioButton)sender; 
-            if(rb.Checked)
-                TagOfProject = (int)rb.Tag;
+            RadioButton rb = (RadioButton)sender;
+            if (!rb.Checked) return;
+            TagOfProject = (int)rb.Tag;
             RBchanged(bIsLocal);
         }
         bool bIsLocal = true;
@@ -272,6 +272,7 @@ additional data";
 
         private void btnViewData_Click(object sender, EventArgs e)
         {
+            if (ProjUrl.Text == "") return;
             Process.Start(ProjUrl.Text.ToString());
         }
 
@@ -492,6 +493,10 @@ additional data";
                 case "null":
                     nErr = ProjectStats.GetTableFromRaw();
                     GetResults();
+                    break;
+                case "yoyo": // 2025 may 12
+                case "wcg": // 2025 may 12
+                    tbInfo.Text = "This project not implemented yet";
                     break;
             }
             return n;
@@ -738,8 +743,7 @@ additional data";
             if (pbTask.Value >= pbTask.Maximum || ProjectStats.TaskDone)
             {
                 TaskTimer.Stop();
-                //if(!bInSequencer)
-                    pbTask.Value = 0;
+                pbTask.Value = 0;
                 if(ProjectStats.TaskDone == false)
                 {
                     if(!ManualCancel)
@@ -752,6 +756,12 @@ additional data";
                 switch (ProjectStats.sTaskType)
                 {
                     case "HDR":
+                        if (ProjectStats.sCountValids == "yoyo" || ProjectStats.sCountValids == "wcg")
+                        {
+                            RecordsPerPage = ProcessBody();
+                            AllowGS(!ProjectStats.TaskError);
+                            return;
+                        }
                         if (ProjectStats.sCountValids != "null")
                         {
                             sTemp = "";
@@ -761,6 +771,7 @@ additional data";
                             {
                                 tbInfo.Text = "No valid records found for " + MyComputerID + " and project " +
                                    ProjectStats.ShortName(TagOfProject);
+                                if(ProjectStats.TaskError) tbInfo.Text += Environment.NewLine + "Error: possible timeout ";
                                 return;
                             }
                             else
@@ -770,6 +781,9 @@ additional data";
                                 return;
                             }
                         }
+                        else
+                            tbInfo.Text = "No valid records found for " + MyComputerID + " and project " +
+                                   ProjectStats.ShortName(TagOfProject);
                         //AllowGS(!ProjectStats.TaskError);
                         //RecordsPerPage = ProcessBody();
                         //ProjectStats.sTaskType = "BODY";

@@ -16,6 +16,40 @@ using static System.Windows.Forms.LinkLabel;
 
 namespace CreditStatistics
 {
+
+    public class cNoHeaderProj
+    {
+        public int nAll;
+        public int nValid;
+        public int nInvalid;
+        public int nError;
+        public string sProjectName;
+        public List<cNoHeaderBody> NoHdrList = new List<cNoHeaderBody>();
+        public void Init(string sPJname)
+        {
+            nAll = 0; nValid = 0; nInvalid = 0; nError = 0;
+            NoHdrList.Clear();
+            sProjectName = sPJname;
+        }
+        public void AddBody(ref cNoHeaderBody Body)
+        {
+            NoHdrList.Add(Body);
+            nAll++;
+            if (Body.bValid) nValid++;
+            if (Body.bInvalid) nInvalid++;
+            if (Body.bError) nError++;
+        }
+    }
+    public class cNoHeaderBody
+    {
+        public DateTime tCompleted;
+        public bool bValid;
+        public bool bInvalid;
+        public bool bError;
+        public double ElapsedSecs;
+        public double CPUtimeSecs;
+        public double Credits;
+    }
     public class cCreditInfo
     {
         public DateTime tCompleted;

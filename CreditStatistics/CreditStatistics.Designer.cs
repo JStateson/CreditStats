@@ -601,9 +601,9 @@
             this.label4.ForeColor = System.Drawing.Color.Coral;
             this.label4.Location = new System.Drawing.Point(21, 16);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(126, 32);
+            this.label4.Size = new System.Drawing.Size(124, 32);
             this.label4.TabIndex = 3;
-            this.label4.Text = "Not Programmed\r\n denis, yoyo, wcg";
+            this.label4.Text = "Not Programmed\r\n  yoyo, wcg";
             // 
             // tbSelected
             // 
@@ -642,7 +642,10 @@
             "https://www.primegrid.com/results.php?hostid=905516&offset=0&state=4",
             "https://gerasim.boinc.ru/users/viewHostResults.aspx?hostid=64683&opt=2",
             "https://gpugrid.net/gpugrid/results.php?hostid=635604&offset=0&show_names=0&state" +
-                "=4"});
+                "=4",
+            "https://www.rechenkraft.net/yoyo/results.php?hostid=533079",
+            "https://denis.usj.es/denisathome/results.php?hostid=255879&offset=0&show_names=0&" +
+                "state=4&appid="});
             this.lbSelectDemo.Location = new System.Drawing.Point(3, 144);
             this.lbSelectDemo.Name = "lbSelectDemo";
             this.lbSelectDemo.Size = new System.Drawing.Size(536, 500);
@@ -998,6 +1001,7 @@
             // lbURLtoSequence
             // 
             this.lbURLtoSequence.FormattingEnabled = true;
+            this.lbURLtoSequence.HorizontalScrollbar = true;
             this.lbURLtoSequence.ItemHeight = 16;
             this.lbURLtoSequence.Location = new System.Drawing.Point(21, 170);
             this.lbURLtoSequence.Name = "lbURLtoSequence";
@@ -1118,11 +1122,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1395, 788);
             this.Controls.Add(this.tcProj);
             this.Controls.Add(this.gbGetStats);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "CreditStatistics";
