@@ -716,11 +716,11 @@ additional data";
         }
 
 
-        private bool InstallKnownPCurl(string sUrl, ref string sProjectID)
+        private bool InstallKnownPCurl(string sUrl, ref string sProjectID, string sAppID)
         {
             string s = sUrl;
             bool bFound = GetPCnameFromURL(ref ProjectStats, sUrl, ref sProjectID);
-            if (bFound)
+            if (bFound && sAppID == "")
                 InstallURL(s, "");
             else
             {
@@ -731,7 +731,7 @@ additional data";
                     string t = sStudy.Substring(0, i);
                     if(!s.Contains(t))
                     {
-                        s += t + "0";
+                        s += t + ((sAppID == "") ? "0" : sAppID);
                     }
                 }
                 InstallURL(s, sProjectID);
@@ -739,11 +739,49 @@ additional data";
             return bFound;
         }
 
+        bool HasStudy(string s, ref string studyID)
+        {
+            int j;
+            int i = s.IndexOf("&appid="); // appid is not used for the study id by all projects!
+            if (i >= 0)
+            {
+                j = FirstNonInteger(s, i + 7);
+                studyID = s.Substring(i + 7, j - (i + 7));
+                return true;
+            }
+            if(s.Contains("einstein"))
+            {
+                i = s.IndexOf("tasks/");
+                if(i > 0)
+                {
+                    i += 6;
+                    string sCode = s.Substring(i, 1); // can be 0 or 4 but needs to be 4
+                    if (sCode == "0" || sCode == "4")
+                    {
+                        i++;
+                        if (s.Substring(i, 1) == "/" )
+                        {
+                            i++;
+                            j = FirstNonInteger(s, i);
+                            if(j > 0)
+                            {
+                                studyID = s.Substring(i, j - i);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         private void btnPaste_Click(object sender, EventArgs e)
         {
             string sProjectID = "";
+            string sAppID = "";
             string sUrl = Clipboard.GetText().Trim().ToLower();
-            InstallKnownPCurl(sUrl, ref sProjectID);  
+            HasStudy(sUrl, ref sAppID);
+            InstallKnownPCurl(sUrl, ref sProjectID, sAppID);  
         }
 
         // from TaskTimer.Start(); TaskStart
@@ -771,7 +809,7 @@ additional data";
                         if (ProjectStats.sCountValids == "wcg")
                         {
                             tbHdrInfo.Text = "";
-                            tbInfo.Text = "WCG requies a password to access the data unlike other projects";
+                            tbInfo.Text = "WCG requires a password to access the data unlike other projects";
                             return;
                         }
 
@@ -1516,7 +1554,7 @@ additional data";
         private void btnRunTop_Click(object sender, EventArgs e)
         {
             string sProjectID = "";
-            InstallKnownPCurl(SelectedDemo, ref sProjectID);
+            InstallKnownPCurl(SelectedDemo, ref sProjectID,"");
             StartRun("HDR");
             tcProj.SelectTab("TabP");
         }

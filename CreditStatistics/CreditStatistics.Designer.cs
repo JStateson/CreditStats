@@ -471,6 +471,7 @@
             this.btnPaste.Size = new System.Drawing.Size(70, 20);
             this.btnPaste.TabIndex = 18;
             this.btnPaste.Text = "PASTE";
+            this.toolTip1.SetToolTip(this.btnPaste, "uses appid if supplied");
             this.btnPaste.UseVisualStyleBackColor = true;
             this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 

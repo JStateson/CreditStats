@@ -340,7 +340,7 @@ namespace CreditStatistics
                         {
                             j = FirstNonInteger(sUrl, i + 7);
                             t = sUrl.Substring(i + 7, j - i - 7);
-                            if (t == "0")
+                            if (t != "0")
                             {
                                 ProjectStats.ProjectList[ProjectIndex].sStudyV = t;
                                 ProjectStats.ProjectList[ProjectIndex].UseDefault = true;

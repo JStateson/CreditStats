@@ -119,7 +119,7 @@ hostid=
 einstein
 https://einsteinathome.org
 /host/
-/tasks/4/0
+/tasks/4
 /
 0
 ?page=
@@ -392,6 +392,8 @@ null
             }   
             //string s = p.sURL + p.sHid + sID + p.sValid; // 2025 may 12 + ((p.sStudy == "null") ? "" : p.sStudy + p.sStudyV);
             string s = p.sURL + p.sHid + sID + ((p.sValid == "null") ? "" : p.sValid);
+            s += ((p.sStudy == "null") ? "" : p.sStudy + p.sStudyV);
+            // jys todo todo jun 2025 above not valid for einstein ??
             BaseUrl = s;
             CannotIncrement = (sPage == "" || p.sPage == "null");
             if (CannotIncrement) return s;
@@ -408,7 +410,7 @@ null
             // 2025 may 12 sValid = p.sValid;
             sValid = (p.sValid == "null") ? "" : p.sValid;  
             sPage = p.sPage;
-            sStudy = p.sStudy;
+            sStudy = p.sStudy + p.sStudyV;
             /*
             //return true;
             // 2025 jys do mess with the appid
@@ -504,7 +506,7 @@ null
                         return s;
                     }
 
-                    if (p.sValid == "/tasks/4/0")   // 2025 may 12 this is einstein
+                    if (p.sValid == "/tasks/4")   // 2025 may 12 this is einstein
                     {
                         s += sE;
                         s += p.sPage + "0"; // jys cannot be 0
