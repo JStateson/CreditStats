@@ -1,0 +1,16 @@
+denis:17
+einstein:0 57 40 58 56 25 60
+gpugrid:41 32 40 38
+lhc:13 1 10 14
+milkyway:4
+nfs:6 7 9 10 11
+odlk:3
+odlk1:1
+primegrid:8
+rakesearch:8
+rnma:6
+rosetta:3
+sidock:5
+srbase:15
+wcg:124 92 94 74
+yafu:15

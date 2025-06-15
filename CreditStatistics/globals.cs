@@ -201,6 +201,7 @@ namespace CreditStatistics
 
             public static string[] FindHdr = { "All (", "Valid (", "Invalid (", "Error (" };
             public static string[] FindHdrA = { "All</a> (", "Valid</a> (", "Invalid</a> (", "Error</a> (" };
+            public static string[] FindHdrD = { "All</a> (", "Valid</b> (", "Invalid</a> (", "Error</a> (" };
             public static string[] FindHdrB = { "All</a> ", "Valid</b> ", "Invalid</font> ", "Error</a> " };
             public static string[] FindBTrm = { "|", "|", "|", "<" };
             public static string[] FindHdrC = { ">All ", ">Valid ", ">Invalid ", ">To late " };
@@ -269,6 +270,12 @@ namespace CreditStatistics
                     i++;
                 }
                 return s.Length;
+            }
+
+            public static string InsertStudy(string sUrl, string sStudy)
+            {
+                string s = sUrl;
+                return s;
             }
 
             // check url for errors and extract info from url s
@@ -580,7 +587,7 @@ namespace CreditStatistics
                     string sC = FindHdrC[k];
                     string tC = FindCTrm[k];
 
-
+                    string sD = FindHdrD[k];
                     string sA = FindHdrA[k];
                     string s = FindHdr[k];
                     int i = RawPage.IndexOf(s);
@@ -588,6 +595,11 @@ namespace CreditStatistics
                     if (i < 0)
                     {
                         i = RawPage.IndexOf(sA);
+                        n = sA.Length;
+                    }
+                    if (i < 0)
+                    {
+                        i = RawPage.IndexOf(sD);
                         n = sA.Length;
                     }
                     if (i < 0)

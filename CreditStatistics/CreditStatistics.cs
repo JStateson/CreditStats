@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -494,6 +496,7 @@ additional data";
                 case ">Valid ()</span>.":
                 case "<b>Valid</b> 0 |.":
                 case ">Valid 0 </a>.":
+                case "<b>Valid</b> 0 .":
                     nErr = ProjectStats.GetTableFromRaw();
                     CreditInfo = ProjectStats.LCreditInfo;
                     n = ProjectStats.NumberRecordsRead;
@@ -540,7 +543,7 @@ additional data";
             tbHdrInfo.Clear();
             if (UrlPassed())
             {
-                tbPage.Text = "0";
+                //tbPage.Text = "0";  // this needs to come frp page or offset !!!
                 tbInfo.Text = "";
                 StartRun("HDR");
             }
@@ -709,14 +712,15 @@ additional data";
 
                 ProjUrl.Text = sOut;
                 tbHOSTID.Text = sHost;
-                TagOfProject = ProjectID;
                 tbPage.Text = sPage;
-                SetRB(ProjectID,false);
+                if (TagOfProject != ProjectID)
+                    SetRB(ProjectID, false);
+                TagOfProject = ProjectID;
             }
         }
 
 
-        private bool InstallKnownPCurl(string sUrl, ref string sProjectID, string sAppID)
+        private bool InstallKnownPCurl(string sUrl, ref string sProjectID, string sAppID, string sOfst)
         {
             string s = sUrl;
             bool bFound = GetPCnameFromURL(ref ProjectStats, sUrl, ref sProjectID);
@@ -775,13 +779,37 @@ additional data";
             return false;
         }
 
+        private bool HasOfst(string s, ref string ofst)
+        {
+            int i = s.IndexOf("&offset=");
+            if (i >= 0)
+            {
+                int j = FirstNonInteger(s, i + 8);
+                ofst = s.Substring(i + 8, j - (i + 8));
+                return true;
+            }
+            else
+            {
+                i = s.IndexOf("?page=");
+                if (i >= 0)
+                {
+                    int j = FirstNonInteger(s, i + 6);
+                    ofst = s.Substring(i + 6, j - (i + 6));
+                    return true;
+                }
+                return false;
+            }
+        }
+
         private void btnPaste_Click(object sender, EventArgs e)
         {
             string sProjectID = "";
             string sAppID = "";
+            string sOfst = "0";
             string sUrl = Clipboard.GetText().Trim().ToLower();
+            HasOfst(sUrl, ref sOfst);
             HasStudy(sUrl, ref sAppID);
-            InstallKnownPCurl(sUrl, ref sProjectID, sAppID);  
+            InstallKnownPCurl(sUrl, ref sProjectID, sAppID,sOfst);  
         }
 
         // from TaskTimer.Start(); TaskStart
@@ -1358,9 +1386,17 @@ additional data";
             StartSEQ();
         }
 
+
+
         private void btnViewUrl_Click(object sender, EventArgs e)
         {
-            Process.Start(ProjUrl.Text.ToString());
+            string selectedUrl = lbURLtoSequence.SelectedItem as string;
+            if (!string.IsNullOrEmpty(selectedUrl))
+            {
+                string sStudy = cbKnownIDs.Text;                
+                ProjUrl.Text = InsertStudy(selectedUrl, sStudy);
+                Process.Start(ProjUrl.Text.ToString());
+            }
         }
 
         private void SeqFinished()
@@ -1486,36 +1522,45 @@ additional data";
             string t = lbXX.Text.ToString().Replace("XX", tbXX.Text.Trim());
             string s="";
             string sOld, sNew;
-
+            int i, k, n;
             for (int j = 0; j < lbURLtoSequence.Items.Count; j++)
             {
                 sNew = t;
                 s = lbURLtoSequence.Items[j].ToString();
-                int i = s.IndexOf("/tasks/4/");
+                i = s.IndexOf("/tasks/4");
                 if (i >= 0)
                 {
-                    int k = FirstNonInteger(s, i + 9);
-                    Debug.Assert(k > 0);
-                    sOld = s.Substring(i, k - i);
+                    k = FirstNonInteger(s, i + 8);
+                    string c = s.Substring(k, 1);
+                    if(c == "?")
+                    {
+                        sOld = s.Substring(i, k + 1 - i);
+                        s = s.Replace(sOld, sNew + "?");
+                    }
+                    else if (c == "/")
+                    {
+                        k++;
+                        n = FirstNonInteger(s, k);
+                        sOld = s.Substring(i, n - i);
+                        s = s.Replace(sOld, sNew);
+                    }
+   
                 }
                 else
                 {
                     i = s.IndexOf("&appid=");
                     if ((i > 0))
                     {
-                        int k = FirstNonInteger(s, i + 7);
+                        k = FirstNonInteger(s, i + 7);
                         sOld = s.Substring(i, k - i);
+                        s = s.Replace(sOld, sNew);
                     }
                     else
                     {
-                        i = s.IndexOf("&offset=");
-                        Debug.Assert(i > 0);
-                        sOld = "&offset=";
-                        sNew = sNew + "&offset=";
+                        s += sNew;
                     }
                 }
-                string u = s.Replace(sOld, sNew);
-                lbURLtoSequence.Items[j] = u;
+                lbURLtoSequence.Items[j] = s;
             }
         }
 
@@ -1554,7 +1599,7 @@ additional data";
         private void btnRunTop_Click(object sender, EventArgs e)
         {
             string sProjectID = "";
-            InstallKnownPCurl(SelectedDemo, ref sProjectID,"");
+            InstallKnownPCurl(SelectedDemo, ref sProjectID,"","0");
             StartRun("HDR");
             tcProj.SelectTab("TabP");
         }

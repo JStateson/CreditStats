@@ -553,7 +553,7 @@
             // 
             this.btnRunTop.Enabled = false;
             this.btnRunTop.ForeColor = System.Drawing.Color.Blue;
-            this.btnRunTop.Location = new System.Drawing.Point(24, 97);
+            this.btnRunTop.Location = new System.Drawing.Point(15, 97);
             this.btnRunTop.Name = "btnRunTop";
             this.btnRunTop.Size = new System.Drawing.Size(123, 23);
             this.btnRunTop.TabIndex = 15;
@@ -1002,6 +1002,7 @@
             // lbURLtoSequence
             // 
             this.lbURLtoSequence.FormattingEnabled = true;
+            this.lbURLtoSequence.HorizontalExtent = 1024;
             this.lbURLtoSequence.HorizontalScrollbar = true;
             this.lbURLtoSequence.ItemHeight = 16;
             this.lbURLtoSequence.Location = new System.Drawing.Point(21, 170);

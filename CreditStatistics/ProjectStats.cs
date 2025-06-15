@@ -184,7 +184,7 @@ https://escatter11.fullerton.edu/nfs/results.php?
 hostid=
 &state=4
 &appid=
-9
+11
 &offset=
  Valid () .
 
@@ -286,6 +286,24 @@ null
 null
 &offset=
 null
+
+mine minecrafthome
+https://minecraftathome.com/minecrafthome/results.php?
+hostid=
+&state=4
+&appid=
+9
+&offset=
+ Valid () .
+
+gfn proxyma
+http://boincvm.proxyma.ru:30080/test4vm/results.php?
+hostid=
+&state=4
+&appid=
+14
+&offset=
+<b>Valid</b> 0 .
 
 gene tn-grid
 https://gene.disi.unitn.it/test/results.php?
@@ -410,7 +428,12 @@ null
             // 2025 may 12 sValid = p.sValid;
             sValid = (p.sValid == "null") ? "" : p.sValid;  
             sPage = p.sPage;
-            sStudy = p.sStudy + p.sStudyV;
+            sStudy = "";
+            if(p.sStudy != "null" && p.sStudyV != "null")
+            {
+                sStudy = p.sStudy + p.sStudyV;
+            }
+
             /*
             //return true;
             // 2025 jys do mess with the appid
@@ -920,6 +943,8 @@ null
                 case "odlk\": //  progger":
                 case "gpugrid":
                 case "denis":
+                case "gfn":
+                case "mine":
                     string strH = "workunit.php?";
                     iStart = RawPage.IndexOf(strH);
                     if (iStart < 0)
