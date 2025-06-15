@@ -1344,8 +1344,9 @@ additional data";
 
         private string FormValidTotals()
         {
+            string sStudy = " study# " +cbKnownIDs.Text;
             string sOut = Environment.NewLine + Rp("Computer", ts.nLongestName+1) + "Valid WUs   Efficiency  " +
-                SelectedProject + Environment.NewLine;
+                SelectedProject + sStudy + Environment.NewLine;
             ts.CalcEfficiency();
             for (int i = 0; i < ts.NumUrls; i++)
             {
